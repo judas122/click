@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sala do Futuro - Plataforma de Jogos</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22transparent%22/><text x=%2250%%22 y=%2255%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-family=%22Arial, sans-serif%22 font-weight=%22900%22 font-size=%2265%22 fill=%22%2338bdf8%22>SF</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0b0d12;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    header {
+      margin-top: 50px;
+      text-align: center;
+      padding: 0 20px;
+    }
+    h1 {
+      font-size: 2.8rem;
+      color: #38bdf8;
+      margin-bottom: 8px;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 800;
+    }
+    p { color: #94a3b8; font-size: 1.1rem; }
+    
+    .grid {
+      display: flex;
+      gap: 30px;
+      margin-top: 50px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+      max-width: 900px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      width: 280px;
+      padding: 25px 20px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: #38bdf8;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+    }
+    .card-icon { font-size: 55px; margin-bottom: 15px; }
+    .card-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; color: #f8fafc; }
+    .card-desc { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
+    .btn-play {
+      margin-top: 20px;
+      background: #38bdf8;
+      color: #0b0d12;
+      font-weight: bold;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    footer {
+      margin-top: auto;
+      padding: 25px;
+      font-size: 13px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Portal de Jogos 🎮</h1>
+    <p>Selecione um jogo para começar a jogar</p>
+  </header>
+
+  <div class="grid">
+    <!-- Card do Jogo 1 (Clicker 3D) -->
+    <a href="click.html" class="card">
+      <div class="card-icon">🪐</div>
+      <div class="card-title">Clicker 3D</div>
+      <div class="card-desc">Evolua formas geométricas, planetas e donuts no simulador espacial!</div>
+      <div class="btn-play">Jogar</div>
+    </a>
+
+    <!-- Card do Jogo 2 (Ping Pong 3D) -->
+    <a href="pingpong.html" class="card">
+      <div class="card-icon">🏓</div>
+      <div class="card-title">Ping Pong Pro</div>
+      <div class="card-desc">Jogo de tênis de mesa em 3D. Enfrente o bot nos níveis Fácil até Impossível!</div>
+      <div class="btn-play">Jogar</div>
+    </a>
+  </div>
+
+  <footer>
+    Desenvolvido por: <b>judas122</b>
+  </footer>
+
+</body>
+</html>
