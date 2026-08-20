@@ -75,6 +75,30 @@
       transition: all 0.3s ease-in-out;
     }
 
+    /* Mini Créditos no Canto Inferior Direito */
+    #credits-tag {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      z-index: 30;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+      letter-spacing: 0.5px;
+    }
+
+    #credits-tag b {
+      color: #00f0ff;
+      font-weight: 800;
+    }
+
     /* Painel Admin */
     #admin-panel {
       position: absolute;
@@ -150,6 +174,7 @@
       #settings-menu { right: 20px; top: 70px; }
       #shop-panel { top: auto; bottom: 100px; right: 20px; width: 220px; max-height: 40vh; }
       #status-panel { width: 180px; }
+      #credits-tag { bottom: 10px; right: 10px; font-size: 10px; }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
@@ -163,6 +188,11 @@
       <input type="text" id="username-input" class="login-input" placeholder="Digite seu Nick..." maxlength="20">
       <button id="login-submit-btn" class="login-btn">Jogar</button>
     </div>
+  </div>
+
+  <!-- Mini Créditos -->
+  <div id="credits-tag">
+    Desenvolvido por: <b>luiz pedro rouba pão</b>
   </div>
 
   <!-- Estatísticas -->
@@ -268,7 +298,6 @@
     let costSauce = 100000, costSprinkles = 500000, costGolden = 2000000;
     let currentStage = 0, musicStarted = false, isMuted = false, isClickBtnVisible = true;
 
-    // --- SALVAMENTO LOCAL ---
     function saveGame() {
       if(!username) return;
       const saveData = {
@@ -308,7 +337,6 @@
 
     loadGame();
 
-    // Sistema de Login e Admin
     const loginOverlay = document.getElementById('login-overlay');
     const usernameInput = document.getElementById('username-input');
     const loginSubmitBtn = document.getElementById('login-submit-btn');
@@ -344,14 +372,12 @@
       if (e.key === 'Enter') loginSubmitBtn.click();
     });
 
-    // --- FUNÇÕES DO PAINEL ADMIN ---
     document.getElementById('adm-add-score').addEventListener('click', () => { score += 1000000; updateUI(); saveGame(); });
     document.getElementById('adm-add-rebirth').addEventListener('click', () => { rebirths += 10; updateUI(); saveGame(); });
     document.getElementById('adm-goto-phase2').addEventListener('click', () => { currentPhase = 2; buildMesh(); updateUI(); saveGame(); });
     document.getElementById('adm-goto-phase3').addEventListener('click', () => { currentPhase = 3; buildMesh(); updateUI(); saveGame(); });
     document.getElementById('adm-god-mode').addEventListener('click', () => { clickPower = 1000000000000; updateUI(); saveGame(); });
 
-    // UI & Configurações
     const bgMusic = document.getElementById('bg-music');
     bgMusic.volume = 0.25;
 
