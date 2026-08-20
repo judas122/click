@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Sala do Futuro Aluno</title>
+  <title>Sala do Futuro Aluno - Multi-Fases 3D Complete</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22transparent%22/><text x=%2250%%22 y=%2255%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-family=%22Arial, sans-serif%22 font-weight=%22900%22 font-size=%2265%22 fill=%22%23253b6e%22>SF</text></svg>">
   <style>
     * { box-sizing: border-box; touch-action: manipulation; }
@@ -16,7 +16,7 @@
       -webkit-user-select: none;
     }
 
-    /* Modal de Login / Username */
+    /* Modal de Login */
     #login-overlay {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -76,7 +76,6 @@
       transition: all 0.3s ease-in-out;
     }
 
-    /* Mini Créditos no Canto Inferior Direito */
     #credits-tag {
       position: absolute;
       bottom: 15px;
@@ -92,15 +91,9 @@
       font-weight: 600;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
       pointer-events: none;
-      letter-spacing: 0.5px;
     }
+    #credits-tag b { color: #00f0ff; font-weight: 800; }
 
-    #credits-tag b {
-      color: #00f0ff;
-      font-weight: 800;
-    }
-
-    /* Painel Admin */
     #admin-panel {
       position: absolute;
       top: 20px;
@@ -110,79 +103,60 @@
       box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
       display: none;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+      max-height: 80vh;
+      overflow-y: auto;
     }
     #admin-panel h3 { margin: 0; font-size: 14px; color: #ef4444; text-transform: uppercase; text-align: center; }
     .admin-btn {
-      padding: 8px;
+      padding: 6px;
       background: rgba(239, 68, 68, 0.2);
       border: 1px solid #ef4444;
       color: white;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
       border-radius: 6px;
       cursor: pointer;
     }
     .admin-btn:hover { background: rgba(239, 68, 68, 0.5); }
 
-    /* Painel de Status */
     #status-panel { top: 20px; left: 20px; width: 220px; display: flex; flex-direction: column; gap: 8px; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; }
-    .panel-title { font-size: 14px; font-weight: bold; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-    .toggle-btn { background: rgba(255, 255, 255, 0.1); border: none; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 6px; padding: 4px 10px; transition: background 0.2s; }
-    .toggle-btn:hover { background: rgba(0, 240, 255, 0.3); }
-
-    .hud-panel.minimized .panel-content { display: none !important; }
-    .hud-panel.minimized { width: auto !important; padding: 10px 15px; }
+    .panel-title { font-size: 14px; font-weight: bold; color: #94a3b8; text-transform: uppercase; }
+    .toggle-btn { background: rgba(255, 255, 255, 0.1); border: none; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 6px; padding: 4px 10px; }
 
     .stat-box { display: flex; flex-direction: column; }
     .stat-label { font-size: 12px; color: #94a3b8; font-weight: 600; }
     .stat-val { font-size: 22px; font-weight: 800; color: #00f0ff; word-break: break-word; }
     .sub-stat { font-size: 13px; color: #e2e8f0; font-weight: 500; }
 
-    /* Configurações */
-    #settings-btn { position: absolute; top: 20px; right: 330px; z-index: 12; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; width: 45px; height: 45px; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: transform 0.2s; }
-    #settings-btn:hover { transform: scale(1.1); }
+    #settings-btn { position: absolute; top: 20px; right: 330px; z-index: 12; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; width: 45px; height: 45px; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px); }
     #settings-menu { position: absolute; top: 75px; right: 330px; z-index: 12; width: 220px; display: none; flex-direction: column; gap: 12px; }
     .settings-option { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     .reset-save-btn { background: #ef4444 !important; color: white !important; font-weight: bold; width: 100%; margin-top: 5px; padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer; }
 
-    /* Loja */
     #shop-panel { top: 20px; right: 20px; width: 290px; display: flex; flex-direction: column; gap: 10px; max-height: 85vh; overflow-y: auto; }
     #shop-panel h3 { margin: 0 0 5px 0; font-size: 18px; color: #ff007f; text-transform: uppercase; text-align: center; }
-    .shop-btn { width: 100%; padding: 10px 12px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: white; font-weight: bold; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px; transition: all 0.2s; }
+    .shop-btn { width: 100%; padding: 10px 12px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: white; font-weight: bold; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px; }
     .shop-btn:hover:not(:disabled) { border-color: #00f0ff; transform: translateY(-2px); }
     .shop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .advance-phase-btn { background: linear-gradient(135deg, #8b5cf6, #d946ef) !important; border: 1px solid #f472b6 !important; animation: pulseBtn 1.5s infinite alternate; box-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
+    .advance-phase-btn { background: linear-gradient(135deg, #8b5cf6, #d946ef) !important; border: 1px solid #f472b6 !important; animation: pulseBtn 1.5s infinite alternate; }
     @keyframes pulseBtn { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
-    .pet-btn { background: linear-gradient(135deg, #0284c7, #0369a1) !important; }
-    .food-btn { background: linear-gradient(135deg, #d97706, #b45309) !important; }
+    .phase-specific-btn { background: linear-gradient(135deg, #0284c7, #0d9488) !important; }
     .rebirth-btn { background: linear-gradient(135deg, #ff007f, #7928ca) !important; }
 
-    /* Mobile Click */
-    #mobile-click-btn { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 15; padding: 16px 40px; font-size: 20px; font-weight: 900; color: #fff; background: linear-gradient(135deg, #00f0ff, #7928ca); border: 2px solid #ffffff; border-radius: 50px; box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); cursor: pointer; outline: none; transition: transform 0.1s, opacity 0.3s; }
-    #mobile-click-btn:active { transform: translateX(-50%) scale(0.92); }
+    #mobile-click-btn { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 15; padding: 16px 40px; font-size: 20px; font-weight: 900; color: #fff; background: linear-gradient(135deg, #00f0ff, #7928ca); border: 2px solid #ffffff; border-radius: 50px; cursor: pointer; }
 
-    .floating-text { position: absolute; font-weight: 900; font-size: 24px; color: #00f0ff; pointer-events: none; animation: floatUp 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) FORWARD; z-index: 20; }
-    @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); } 50% { transform: translate(-50%, -100px) scale(1.3); } 100% { opacity: 0; transform: translate(-50%, -130px) scale(1); } }
+    .floating-text { position: absolute; font-weight: 900; font-size: 24px; color: #00f0ff; pointer-events: none; animation: floatUp 0.8s forwards; z-index: 20; }
+    @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); } 100% { opacity: 0; transform: translate(-50%, -130px) scale(1); } }
 
     #canvas-container { width: 100vw; height: 100vh; }
-
-    @media (max-width: 768px) {
-      #admin-panel { left: 20px; top: 220px; }
-      #settings-btn { right: 20px; top: 15px; }
-      #settings-menu { right: 20px; top: 70px; }
-      #shop-panel { top: auto; bottom: 100px; right: 20px; width: 220px; max-height: 40vh; }
-      #status-panel { width: 180px; }
-      #credits-tag { bottom: 10px; right: 10px; font-size: 10px; }
-    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 </head>
 <body>
 
-  <!-- Tela de Login de Username -->
   <div id="login-overlay">
     <div class="login-card">
       <h2>Entrar no Simulado</h2>
@@ -191,95 +165,78 @@
     </div>
   </div>
 
-  <!-- Mini Créditos -->
-  <div id="credits-tag">
-    Desenvolvido por: <b>luiz pedro rouba pão</b>
-  </div>
+  <div id="credits-tag">Desenvolvido por: <b>luiz pedro rouba pão</b></div>
 
-  <!-- Estatísticas -->
   <div id="status-panel" class="hud-panel">
     <div class="panel-header">
       <span class="panel-title">Estatísticas</span>
-      <button id="toggle-status" class="toggle-btn" title="Minimizar / Expandir">—</button>
+      <button id="toggle-status" class="toggle-btn">—</button>
     </div>
-    
     <div class="panel-content" style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
-      <div class="stat-box">
-        <span class="stat-label">Jogador</span>
-        <span class="sub-stat"><b id="player-display" style="color:#facc15">Conectando...</b></span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">Pontos</span>
-        <span id="score" class="stat-val">0</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">Fase Atual</span>
-        <span class="sub-stat"><b id="phase-name" style="color:#00f0ff">Fase 1: Geometria</b></span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">Objeto Atual</span>
-        <span class="sub-stat"><b id="stage-name" style="color:#fff">Cubo</b></span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">Rebirths</span>
-        <span class="sub-stat"><b id="rebirths" style="color:#ff007f">0</b></span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">Atributos Ativos</span>
-        <span class="sub-stat"><b id="pets-list" style="color:#38bdf8">Nenhum</b></span>
-      </div>
+      <div class="stat-box"><span class="stat-label">Jogador</span><span class="sub-stat"><b id="player-display" style="color:#facc15">Conectando...</b></span></div>
+      <div class="stat-box"><span class="stat-label">Pontos</span><span id="score" class="stat-val">0</span></div>
+      <div class="stat-box"><span class="stat-label">Fase Atual</span><span class="sub-stat"><b id="phase-name" style="color:#00f0ff">Fase 1</b></span></div>
+      <div class="stat-box"><span class="stat-label">Objeto Atual</span><span class="sub-stat"><b id="stage-name" style="color:#fff">Objeto</b></span></div>
+      <div class="stat-box"><span class="stat-label">Rebirths</span><span class="sub-stat"><b id="rebirths" style="color:#ff007f">0</b></span></div>
+      <div class="stat-box"><span class="stat-label">Upgrades Visuais</span><span class="sub-stat"><b id="pets-list" style="color:#38bdf8">Nenhum</b></span></div>
     </div>
   </div>
 
-  <!-- Painel Admin Secreto -->
   <div id="admin-panel" class="hud-panel">
-    <h3>⚡ Painel Admin ⚡</h3>
-    <button id="adm-add-score" class="admin-btn">+1.000.000 Pts</button>
+    <h3>⚡ Admin ⚡</h3>
+    <button id="adm-add-score" class="admin-btn">+1.000.000.000 Pts</button>
     <button id="adm-add-rebirth" class="admin-btn">+10 Rebirths</button>
-    <button id="adm-goto-phase2" class="admin-btn">Ir p/ Fase 2</button>
-    <button id="adm-goto-phase3" class="admin-btn">Ir p/ Fase 3</button>
-    <button id="adm-god-mode" class="admin-btn">Modo Infinito</button>
+    <button id="adm-goto-p1" class="admin-btn">Ir p/ Fase 1</button>
+    <button id="adm-goto-p2" class="admin-btn">Ir p/ Fase 2</button>
+    <button id="adm-goto-p3" class="admin-btn">Ir p/ Fase 3</button>
+    <button id="adm-goto-p4" class="admin-btn">Ir p/ Fase 4</button>
+    <button id="adm-goto-p5" class="admin-btn">Ir p/ Fase 5</button>
+    <button id="adm-goto-p6" class="admin-btn">Ir p/ Fase 6</button>
   </div>
 
-  <!-- Botão e Menu de Configurações -->
-  <button id="settings-btn" title="Configurações">⚙️</button>
+  <button id="settings-btn">⚙️</button>
   <div id="settings-menu" class="hud-panel">
     <div class="panel-header"><span class="panel-title">Opções</span></div>
-    <div class="settings-option">
-      <span>Música Relax</span>
-      <button id="toggle-music-btn" class="toggle-btn">🔊 ON</button>
-    </div>
-    <div class="settings-option">
-      <span>Botão Clicar</span>
-      <button id="toggle-click-btn" class="toggle-btn">👁️ VISÍVEL</button>
-    </div>
+    <div class="settings-option"><span>Música</span><button id="toggle-music-btn" class="toggle-btn">🔊 ON</button></div>
+    <div class="settings-option"><span>Botão Clicar</span><button id="toggle-click-btn" class="toggle-btn">👁️ VISÍVEL</button></div>
     <button id="reset-save-btn" class="reset-save-btn">🗑️ Resetar Jogo</button>
   </div>
 
-  <!-- Loja de Upgrades -->
   <div id="shop-panel" class="hud-panel">
     <h3>Loja de Upgrades</h3>
     <button id="btn-advance-phase" class="shop-btn advance-phase-btn" style="display: none;">
-      <span>🚀 Entrar no Buraco Negro (Ir p/ Fase 3)</span>
-      <small>Atalho Aberto!</small>
+      <span id="advance-text">🚀 Próxima Fase</span>
+      <small>Portal Aberto!</small>
     </button>
 
     <button id="buy-click" class="shop-btn"><span>Dobrar Clique (x2)</span><small>Custo: <span id="cost-click">10</span> pts</small></button>
     <button id="buy-auto" class="shop-btn"><span>Comprar Auto-Clicker (+1/s)</span><small>Custo: <span id="cost-auto">25</span> pts</small></button>
 
-    <div id="space-pets-shop" style="display: none; flex-direction: column; gap: 8px;">
-      <button id="buy-ring" class="shop-btn pet-btn"><span>🪐 Anel de Saturno (+100% Pts)</span><small>Custo: <span id="cost-ring">500</span> pts</small></button>
-      <button id="buy-mars" class="shop-btn pet-btn"><span>🔴 Cor de Marte (Vermelho)</span><small>Custo: <span id="cost-mars">2,000</span> pts</small></button>
-      <button id="buy-ice" class="shop-btn pet-btn"><span>❄️ Frio de Urano (Aura x2)</span><small>Custo: <span id="cost-ice">10,000</span> pts</small></button>
+    <div id="p2-shop" style="display: none; flex-direction: column; gap: 8px;">
+      <button id="buy-ring" class="shop-btn phase-specific-btn"><span>🪐 Anel Visual 3D (+100%)</span><small>Custo: <span id="cost-ring">500</span></small></button>
     </div>
 
-    <div id="food-shop" style="display: none; flex-direction: column; gap: 8px;">
-      <button id="buy-sauce" class="shop-btn food-btn"><span>🌶️ Molho Picante (x3 Pontos)</span><small>Custo: <span id="cost-sauce">100,000</span> pts</small></button>
-      <button id="buy-sprinkles" class="shop-btn food-btn"><span>✨ Confeitos Estelares (+10 Auto)</span><small>Custo: <span id="cost-sprinkles">500,000</span> pts</small></button>
-      <button id="buy-golden" class="shop-btn food-btn"><span>🧀 Cobertura Ouro (x5 Pontos)</span><small>Custo: <span id="cost-golden">2,000,000</span> pts</small></button>
+    <div id="p3-shop" style="display: none; flex-direction: column; gap: 8px;">
+      <button id="buy-sauce" class="shop-btn phase-specific-btn"><span>🌶️ Molho Picante (x3 Pts)</span><small>Custo: <span id="cost-sauce">100.000</span></small></button>
     </div>
 
-    <button id="buy-rebirth" class="shop-btn rebirth-btn"><span>REBIRTH (Resetar por Bônus)</span><small>Requer: <span id="cost-rebirth">1,000</span> pts</small></button>
+    <div id="p4-shop" style="display: none; flex-direction: column; gap: 8px;">
+      <button id="buy-neon" class="shop-btn phase-specific-btn"><span>🌆 Aura/Cubo Cyber 3D (x4 Pts)</span><small>Custo: <span id="cost-neon">10.000.000</span></small></button>
+    </div>
+
+    <div id="p5-shop" style="display: none; flex-direction: column; gap: 8px;">
+      <button id="buy-orb" class="shop-btn phase-specific-btn"><span>🔮 Esfera Mana 3D (x10 Pts)</span><small>Custo: <span id="cost-orb">200.000.000</span></small></button>
+      <button id="btn-challenge-p5" class="shop-btn phase-specific-btn" style="background: linear-gradient(135deg, #a855f7, #6366f1) !important;">
+        <span>📜 Desafio Místico: Quebrar Selo</span>
+        <small id="challenge-status">Status: Selado 🔒</small>
+      </button>
+    </div>
+
+    <div id="p6-shop" style="display: none; flex-direction: column; gap: 8px;">
+      <button id="buy-quantum" class="shop-btn phase-specific-btn"><span>⚛️ Anéis Quânticos 3D (x20 Pts)</span><small>Custo: <span id="cost-quantum">10.000.000.000</span></small></button>
+    </div>
+
+    <button id="buy-rebirth" class="shop-btn rebirth-btn"><span>REBIRTH</span><small>Requer: <span id="cost-rebirth">1.000</span> pts</small></button>
   </div>
 
   <button id="mobile-click-btn">CLICAR! 👆</button>
@@ -290,45 +247,43 @@
   </audio>
 
   <script>
-    let username = "";
-    let score = 0, clickPower = 1, autoClickers = 0, rebirths = 0, currentPhase = 1;
+    let username = "", score = 0, clickPower = 1, autoClickers = 0, rebirths = 0, currentPhase = 1;
     let costClick = 10, costAuto = 25, costRebirth = 1000;
-    let hasSaturnRing = false, hasMarsColor = false, hasUranoIce = false;
-    let costRing = 500, costMars = 2000, costIce = 10000;
-    let hasHotSauce = false, hasSprinkles = false, hasGoldenCover = false;
-    let costSauce = 100000, costSprinkles = 500000, costGolden = 2000000;
+    
+    let hasSaturnRing = false, hasNeonAura = false, hasManaOrb = false, hasQuantumCore = false;
+    let costRing = 500, costNeon = 10000000, costOrb = 200000000, costQuantum = 10000000000;
+    let phase5ChallengeDone = false;
+
     let currentStage = 0, musicStarted = false, isMuted = false, isClickBtnVisible = true;
+    let targetScale = new THREE.Vector3(1, 1, 1);
+
+    const phaseThresholds = { 1: 0, 2: 1000, 3: 50000, 4: 5000000, 5: 100000000, 6: 5000000000 };
 
     function saveGame() {
       if(!username) return;
       const saveData = {
         username, score, clickPower, autoClickers, rebirths, currentPhase,
-        costClick, costAuto, costRebirth, hasSaturnRing, hasMarsColor, hasUranoIce,
-        hasHotSauce, hasSprinkles, hasGoldenCover, currentStage, isMuted, isClickBtnVisible
+        costClick, costAuto, costRebirth, hasSaturnRing, hasNeonAura,
+        hasManaOrb, hasQuantumCore, phase5ChallengeDone, currentStage, isMuted, isClickBtnVisible
       };
-      localStorage.setItem('3d_clicker_save', JSON.stringify(saveData));
+      localStorage.setItem('3d_clicker_save_v2', JSON.stringify(saveData));
     }
 
     function loadGame() {
-      const saved = localStorage.getItem('3d_clicker_save');
+      const saved = localStorage.getItem('3d_clicker_save_v2');
       if (saved) {
         try {
           const data = JSON.parse(saved);
-          username = data.username ?? "";
-          score = data.score ?? 0;
-          clickPower = data.clickPower ?? 1;
-          autoClickers = data.autoClickers ?? 0;
-          rebirths = data.rebirths ?? 0;
-          currentPhase = data.currentPhase ?? 1;
-          costClick = data.costClick ?? 10;
-          costAuto = data.costAuto ?? 25;
+          username = data.username ?? ""; score = data.score ?? 0;
+          clickPower = data.clickPower ?? 1; autoClickers = data.autoClickers ?? 0;
+          rebirths = data.rebirths ?? 0; currentPhase = data.currentPhase ?? 1;
+          costClick = data.costClick ?? 10; costAuto = data.costAuto ?? 25;
           costRebirth = data.costRebirth ?? 1000;
           hasSaturnRing = data.hasSaturnRing ?? false;
-          hasMarsColor = data.hasMarsColor ?? false;
-          hasUranoIce = data.hasUranoIce ?? false;
-          hasHotSauce = data.hasHotSauce ?? false;
-          hasSprinkles = data.hasSprinkles ?? false;
-          hasGoldenCover = data.hasGoldenCover ?? false;
+          hasNeonAura = data.hasNeonAura ?? false;
+          hasManaOrb = data.hasManaOrb ?? false;
+          hasQuantumCore = data.hasQuantumCore ?? false;
+          phase5ChallengeDone = data.phase5ChallengeDone ?? false;
           currentStage = data.currentStage ?? 0;
           isMuted = data.isMuted ?? false;
           isClickBtnVisible = data.isClickBtnVisible ?? true;
@@ -344,8 +299,9 @@
     const adminPanel = document.getElementById('admin-panel');
     const playerDisplay = document.getElementById('player-display');
 
+    /* VALIDAÇÃO DE NICK ADMIN ATUALIZADA */
     function checkAdminStatus(name) {
-      if (name.trim().toLowerCase() === "hulkmagreloide123") {
+      if (name.trim().toLowerCase() === "patricia") {
         adminPanel.style.display = "flex";
       } else {
         adminPanel.style.display = "none";
@@ -360,68 +316,45 @@
       saveGame();
     }
 
-    if (username) {
-      initUser(username);
-    }
+    if (username) initUser(username);
 
-    loginSubmitBtn.addEventListener('click', () => {
-      const val = usernameInput.value.trim();
-      if (val.length > 0) initUser(val);
-    });
+    loginSubmitBtn.addEventListener('click', () => { if (usernameInput.value.trim()) initUser(usernameInput.value); });
+    usernameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') loginSubmitBtn.click(); });
 
-    usernameInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') loginSubmitBtn.click();
-    });
-
-    document.getElementById('adm-add-score').addEventListener('click', () => { score += 1000000; updateUI(); saveGame(); });
+    // Admin
+    document.getElementById('adm-add-score').addEventListener('click', () => { score += 1000000000; updateUI(); saveGame(); });
     document.getElementById('adm-add-rebirth').addEventListener('click', () => { rebirths += 10; updateUI(); saveGame(); });
-    document.getElementById('adm-goto-phase2').addEventListener('click', () => { currentPhase = 2; buildMesh(); updateUI(); saveGame(); });
-    document.getElementById('adm-goto-phase3').addEventListener('click', () => { currentPhase = 3; buildMesh(); updateUI(); saveGame(); });
-    document.getElementById('adm-god-mode').addEventListener('click', () => { clickPower = 1000000000000; updateUI(); saveGame(); });
+    document.getElementById('adm-goto-p1').addEventListener('click', () => { currentPhase = 1; buildMesh(); updateUI(); saveGame(); });
+    document.getElementById('adm-goto-p2').addEventListener('click', () => { currentPhase = 2; buildMesh(); updateUI(); saveGame(); });
+    document.getElementById('adm-goto-p3').addEventListener('click', () => { currentPhase = 3; buildMesh(); updateUI(); saveGame(); });
+    document.getElementById('adm-goto-p4').addEventListener('click', () => { currentPhase = 4; buildMesh(); updateUI(); saveGame(); });
+    document.getElementById('adm-goto-p5').addEventListener('click', () => { currentPhase = 5; buildMesh(); updateUI(); saveGame(); });
+    document.getElementById('adm-goto-p6').addEventListener('click', () => { currentPhase = 6; buildMesh(); updateUI(); saveGame(); });
 
     const bgMusic = document.getElementById('bg-music');
     bgMusic.volume = 0.25;
-
-    function startMusic() {
-      if (!musicStarted && !isMuted) { bgMusic.play().catch(() => {}); musicStarted = true; }
-    }
+    function startMusic() { if (!musicStarted && !isMuted) { bgMusic.play().catch(() => {}); musicStarted = true; } }
 
     const settingsBtn = document.getElementById('settings-btn');
     const settingsMenu = document.getElementById('settings-menu');
-    const toggleMusicBtn = document.getElementById('toggle-music-btn');
-    const toggleClickBtn = document.getElementById('toggle-click-btn');
-    const resetSaveBtn = document.getElementById('reset-save-btn');
-    const mobileClickBtn = document.getElementById('mobile-click-btn');
+    settingsBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.style.display = settingsMenu.style.display === 'flex' ? 'none' : 'flex'; });
+    document.addEventListener('click', (e) => { if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) settingsMenu.style.display = 'none'; });
 
-    settingsBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      settingsMenu.style.display = settingsMenu.style.display === 'flex' ? 'none' : 'flex';
+    document.getElementById('toggle-music-btn').addEventListener('click', () => {
+      isMuted = !isMuted; bgMusic.pause();
+      document.getElementById('toggle-music-btn').textContent = isMuted ? '🔇 OFF' : '🔊 ON';
+      if(!isMuted) bgMusic.play().catch(() => {}); saveGame();
     });
 
-    document.addEventListener('click', (e) => {
-      if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) settingsMenu.style.display = 'none';
-    });
-
-    toggleMusicBtn.addEventListener('click', () => {
-      isMuted = !isMuted;
-      bgMusic.pause();
-      toggleMusicBtn.textContent = isMuted ? '🔇 OFF' : '🔊 ON';
-      if(!isMuted) bgMusic.play().catch(() => {});
-      saveGame();
-    });
-
-    toggleClickBtn.addEventListener('click', () => {
+    document.getElementById('toggle-click-btn').addEventListener('click', () => {
       isClickBtnVisible = !isClickBtnVisible;
-      mobileClickBtn.style.display = isClickBtnVisible ? 'block' : 'none';
-      toggleClickBtn.textContent = isClickBtnVisible ? '👁️ VISÍVEL' : '🙈 OCULTO';
+      document.getElementById('mobile-click-btn').style.display = isClickBtnVisible ? 'block' : 'none';
+      document.getElementById('toggle-click-btn').textContent = isClickBtnVisible ? '👁️ VISÍVEL' : '🙈 OCULTO';
       saveGame();
     });
 
-    resetSaveBtn.addEventListener('click', () => {
-      if (confirm("Resetar todo o seu progresso?")) {
-        localStorage.removeItem('3d_clicker_save');
-        location.reload();
-      }
+    document.getElementById('reset-save-btn').addEventListener('click', () => {
+      if (confirm("Resetar todo o seu progresso?")) { localStorage.removeItem('3d_clicker_save_v2'); location.reload(); }
     });
 
     const stagesPhase1 = [
@@ -429,26 +362,6 @@
       { name: "Octaedro", req: 100, createGeo: () => new THREE.OctahedronGeometry(1.5) },
       { name: "Anel Toroidal", req: 500, createGeo: () => new THREE.TorusGeometry(1.2, 0.4, 16, 100) }
     ];
-
-    const statusPanel = document.getElementById('status-panel');
-    const toggleStatusBtn = document.getElementById('toggle-status');
-    toggleStatusBtn.addEventListener('click', () => {
-      statusPanel.classList.toggle('minimized');
-      toggleStatusBtn.textContent = statusPanel.classList.contains('minimized') ? '┼' : '—';
-    });
-
-    const stageNameEl = document.getElementById('stage-name');
-    const phaseNameEl = document.getElementById('phase-name');
-    const btnAdvance = document.getElementById('btn-advance-phase');
-    const btnClick = document.getElementById('buy-click');
-    const btnAuto = document.getElementById('buy-auto');
-    const btnRebirth = document.getElementById('buy-rebirth');
-    const btnRing = document.getElementById('buy-ring');
-    const btnMars = document.getElementById('buy-mars');
-    const btnIce = document.getElementById('buy-ice');
-    const btnSauce = document.getElementById('buy-sauce');
-    const btnSprinkles = document.getElementById('buy-sprinkles');
-    const btnGolden = document.getElementById('buy-golden');
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -459,67 +372,111 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    const mainLight = new THREE.PointLight(0x00f0ff, 2, 100);
-    mainLight.position.set(5, 5, 5);
-    scene.add(mainLight);
-
-    const secondLight = new THREE.PointLight(0xff007f, 1.5, 100);
-    secondLight.position.set(-5, -5, -2);
-    scene.add(secondLight);
+    const mainLight = new THREE.PointLight(0x00f0ff, 2, 100); mainLight.position.set(5, 5, 5); scene.add(mainLight);
+    const secondLight = new THREE.PointLight(0xff007f, 1.5, 100); secondLight.position.set(-5, -5, -2); scene.add(secondLight);
     scene.add(new THREE.AmbientLight(0xffffff, 0.4));
 
-    let currentMesh = null, saturnRingMesh = null, blackHoleDisk = null;
+    let currentMesh = null;
+    let saturnRingMesh = null, neonCubeMesh = null, manaOrbMesh = null, quantumCoreMesh = null;
+    let starParticles = null;
+
+    function setupPhase6Background() {
+      if (starParticles) scene.remove(starParticles);
+      const starsGeo = new THREE.BufferGeometry();
+      const count = 1200;
+      const positions = new Float32Array(count * 3);
+      for(let i=0; i<count*3; i+=3) {
+        positions[i] = (Math.random() - 0.5) * 40;
+        positions[i+1] = (Math.random() - 0.5) * 40;
+        positions[i+2] = (Math.random() - 0.5) * 100;
+      }
+      starsGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const starsMat = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.15, transparent: true, opacity: 0.8 });
+      starParticles = new THREE.Points(starsGeo, starsMat);
+      starParticles.visible = false;
+      scene.add(starParticles);
+    }
+    setupPhase6Background();
 
     function buildMesh() {
       if (currentMesh) scene.remove(currentMesh);
-      saturnRingMesh = null; blackHoleDisk = null;
+      targetScale.set(1, 1, 1);
+      
+      if (starParticles) starParticles.visible = (currentPhase === 6);
+
+      const rootGroup = new THREE.Group();
 
       if (currentPhase === 1) {
         const stage = stagesPhase1[currentStage] || stagesPhase1[0];
-        currentMesh = new THREE.Mesh(stage.createGeo(), new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.2, metalness: 0.8 }));
-        stageNameEl.textContent = stage.name;
-        phaseNameEl.textContent = "Fase 1: Geometria";
+        const main = new THREE.Mesh(stage.createGeo(), new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.2, metalness: 0.8 }));
+        rootGroup.add(main);
+        document.getElementById('stage-name').textContent = stage.name;
+        document.getElementById('phase-name').textContent = "Fase 1: Geometria";
       } 
       else if (currentPhase === 2) {
-        if (hasUranoIce) mainLight.color.setHex(0x38bdf8);
-        if (score >= 50000) {
-          currentMesh = new THREE.Group();
-          currentMesh.add(new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), new THREE.MeshBasicMaterial({ color: 0x000000 })));
-          blackHoleDisk = new THREE.Mesh(new THREE.RingGeometry(1.4, 2.8, 32), new THREE.MeshBasicMaterial({ color: 0xa855f7, side: THREE.DoubleSide }));
-          blackHoleDisk.rotation.x = Math.PI / 2.3;
-          currentMesh.add(blackHoleDisk);
-          stageNameEl.textContent = "🕳️ BURACO NEGRO CÓSMICO";
-          phaseNameEl.textContent = "Fase 2: Vórtice Singular";
-        } else {
-          currentMesh = new THREE.Group();
-          currentMesh.add(new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), new THREE.MeshStandardMaterial({ color: hasMarsColor ? 0xef4444 : 0x22d3ee, roughness: 0.6 })));
-          if (hasSaturnRing) {
-            saturnRingMesh = new THREE.Mesh(new THREE.RingGeometry(1.6, 2.3, 32), new THREE.MeshBasicMaterial({ color: 0xfde047, side: THREE.DoubleSide, transparent: true, opacity: 0.8 }));
-            saturnRingMesh.rotation.x = Math.PI / 2.5;
-            currentMesh.add(saturnRingMesh);
-          }
-          stageNameEl.textContent = `Planeta (${Math.floor(score/1000)}k km)`;
-          phaseNameEl.textContent = "Fase 2: Planetas 🌌";
-        }
+        const main = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), new THREE.MeshStandardMaterial({ color: 0x22d3ee, roughness: 0.6 }));
+        rootGroup.add(main);
+        document.getElementById('stage-name').textContent = `Planeta Galáctico`;
+        document.getElementById('phase-name').textContent = "Fase 2: Planetas 🌌";
       }
       else if (currentPhase === 3) {
-        let foodColor = hasGoldenCover ? 0xfacc15 : (hasHotSauce ? 0xd97706 : 0xf472b6);
-        const mat = new THREE.MeshStandardMaterial({ color: foodColor, roughness: 0.3, metalness: hasGoldenCover ? 0.9 : 0.1 });
-        currentMesh = new THREE.Mesh(new THREE.TorusGeometry(1.3, 0.6, 24, 60), mat);
-        stageNameEl.textContent = "🍩 Donut Galáctico";
-        phaseNameEl.textContent = "Fase 3: Gastronomia 🍔";
+        const main = new THREE.Mesh(new THREE.TorusGeometry(1.3, 0.6, 24, 60), new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.3 }));
+        rootGroup.add(main);
+        document.getElementById('stage-name').textContent = "🍩 Donut Galáctico";
+        document.getElementById('phase-name').textContent = "Fase 3: Gastronomia 🍔";
       }
+      else if (currentPhase === 4) {
+        const main = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4, 1), new THREE.MeshStandardMaterial({ color: 0xec4899, wireframe: true }));
+        rootGroup.add(main);
+        document.getElementById('stage-name').textContent = "🌆 Núcleo Cyber";
+        document.getElementById('phase-name').textContent = "Fase 4: Metrópole Cyber 🤖";
+      }
+      else if (currentPhase === 5) {
+        const main = new THREE.Mesh(new THREE.DodecahedronGeometry(1.5, 0), new THREE.MeshStandardMaterial({ color: 0x6366f1, roughness: 0.1, metalness: 0.5 }));
+        rootGroup.add(main);
+        document.getElementById('stage-name').textContent = "🔮 Cristal de Mana";
+        document.getElementById('phase-name').textContent = "Fase 5: Reino Místico ✨";
+      }
+      else if (currentPhase === 6) {
+        const main = new THREE.Mesh(new THREE.TorusKnotGeometry(1.1, 0.3, 100, 16), new THREE.MeshStandardMaterial({ color: 0x3b82f6, metalness: 0.9, roughness: 0.1 }));
+        rootGroup.add(main);
+        document.getElementById('stage-name').textContent = "⚛️ Nó Quântico Multidimensional";
+        document.getElementById('phase-name').textContent = "Fase 6: Dimensão Quântica 🌌";
+      }
+
+      if (hasSaturnRing) {
+        saturnRingMesh = new THREE.Mesh(new THREE.RingGeometry(1.7, 2.4, 32), new THREE.MeshBasicMaterial({ color: 0xfde047, side: THREE.DoubleSide, transparent: true, opacity: 0.8 }));
+        saturnRingMesh.rotation.x = Math.PI / 2.3;
+        rootGroup.add(saturnRingMesh);
+      }
+      if (hasNeonAura) {
+        neonCubeMesh = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.8, 2.8), new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true }));
+        rootGroup.add(neonCubeMesh);
+      }
+      if (hasManaOrb) {
+        manaOrbMesh = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), new THREE.MeshBasicMaterial({ color: 0xa855f7 }));
+        manaOrbMesh.position.set(2.2, 0, 0);
+        rootGroup.add(manaOrbMesh);
+      }
+      if (hasQuantumCore) {
+        const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.3, 0.05, 16, 50), new THREE.MeshBasicMaterial({ color: 0x22c55e }));
+        const ring2 = ring1.clone();
+        ring2.rotation.x = Math.PI / 2;
+        quantumCoreMesh = new THREE.Group();
+        quantumCoreMesh.add(ring1); quantumCoreMesh.add(ring2);
+        rootGroup.add(quantumCoreMesh);
+      }
+
+      currentMesh = rootGroup;
       scene.add(currentMesh);
     }
-
-    buildMesh();
 
     function getMultipliers() {
       let mult = 1 + (rebirths * 2);
       if (hasSaturnRing) mult *= 2;
-      if (hasUranoIce) mult *= 2;
-      if (hasHotSauce) mult *= 3;
-      if (hasGoldenCover) mult *= 5;
+      if (hasNeonAura) mult *= 4;
+      if (hasManaOrb) mult *= 10;
+      if (hasQuantumCore) mult *= 20;
       return mult;
     }
 
@@ -530,24 +487,21 @@
         const el = document.createElement('div');
         el.className = 'floating-text';
         el.innerText = `+${gain}`;
-        el.style.left = `${mouseX}px`;
-        el.style.top = `${mouseY}px`;
+        el.style.left = `${mouseX}px`; el.style.top = `${mouseY}px`;
         document.body.appendChild(el);
         setTimeout(() => el.remove(), 800);
       }
-      checkStageAndScale();
       updateUI();
     }
 
     function triggerClickAction(x, y) {
       startMusic();
       addPoints(clickPower, x, y, true);
-      if (currentMesh) currentMesh.scale.addScalar(0.12);
+      if (currentMesh) currentMesh.scale.addScalar(0.08);
     }
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-
     window.addEventListener('pointerdown', (e) => {
       if (e.target.closest('.hud-panel') || e.target.id === 'mobile-click-btn' || e.target.closest('#settings-btn') || e.target.closest('#login-overlay')) return;
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -556,38 +510,48 @@
       if (raycaster.intersectObject(currentMesh, true).length > 0) triggerClickAction(e.clientX, e.clientY);
     });
 
-    mobileClickBtn.addEventListener('click', (e) => {
+    document.getElementById('mobile-click-btn').addEventListener('click', (e) => {
       const rect = e.target.getBoundingClientRect();
       triggerClickAction(rect.left + rect.width / 2, rect.top);
     });
 
-    function checkStageAndScale() {
-      if (rebirths >= 3 && currentPhase === 1) { currentPhase = 2; buildMesh(); }
-      if (currentPhase === 1) {
-        let target = 0;
-        for (let i = stagesPhase1.length - 1; i >= 0; i--) { if (score >= stagesPhase1[i].req) { target = i; break; } }
-        if (currentStage !== target) { currentStage = target; buildMesh(); }
-      } 
-      else if (currentPhase === 2 && score < 50000) {
-        const planetScale = 0.8 + Math.min(score / 5000, 2.2);
-        currentMesh.scale.set(planetScale, planetScale, planetScale);
+    document.getElementById('btn-advance-phase').addEventListener('click', () => {
+      const nextP = currentPhase + 1;
+      if (currentPhase === 5 && !phase5ChallengeDone) {
+        alert("🔒 Você precisa quebrar o Selo Místico na loja da Fase 5 para liberar a Fase 6!");
+        return;
       }
-    }
+      if (nextP <= 6 && score >= phaseThresholds[nextP]) {
+        currentPhase = nextP;
+        buildMesh(); updateUI(); saveGame();
+      }
+    });
 
-    btnAdvance.addEventListener('click', () => { if (currentPhase === 2 && score >= 50000) { currentPhase = 3; buildMesh(); updateUI(); saveGame(); } });
-    btnClick.addEventListener('click', () => { if (score >= costClick) { score -= costClick; clickPower *= 2; costClick *= 3; updateUI(); saveGame(); saveGame(); } });
-    btnAuto.addEventListener('click', () => { if (score >= costAuto) { score -= costAuto; autoClickers += 1; costAuto = Math.floor(costAuto * 1.8); updateUI(); saveGame(); } });
-    btnRing.addEventListener('click', () => { if (score >= costRing && !hasSaturnRing) { score -= costRing; hasSaturnRing = true; buildMesh(); updateUI(); saveGame(); } });
-    btnMars.addEventListener('click', () => { if (score >= costMars && !hasMarsColor) { score -= costMars; hasMarsColor = true; buildMesh(); updateUI(); saveGame(); } });
-    btnIce.addEventListener('click', () => { if (score >= costIce && !hasUranoIce) { score -= costIce; hasUranoIce = true; mainLight.color.setHex(0x38bdf8); updateUI(); saveGame(); } });
-    btnSauce.addEventListener('click', () => { if (score >= costSauce && !hasHotSauce) { score -= costSauce; hasHotSauce = true; buildMesh(); updateUI(); saveGame(); } });
-    btnSprinkles.addEventListener('click', () => { if (score >= costSprinkles && !hasSprinkles) { score -= costSprinkles; hasSprinkles = true; autoClickers += 10; buildMesh(); updateUI(); saveGame(); } });
-    btnGolden.addEventListener('click', () => { if (score >= costGolden && !hasGoldenCover) { score -= costGolden; hasGoldenCover = true; buildMesh(); updateUI(); saveGame(); } });
+    document.getElementById('buy-click').addEventListener('click', () => { if (score >= costClick) { score -= costClick; clickPower *= 2; costClick *= 3; updateUI(); saveGame(); } });
+    document.getElementById('buy-auto').addEventListener('click', () => { if (score >= costAuto) { score -= costAuto; autoClickers += 1; costAuto = Math.floor(costAuto * 1.8); updateUI(); saveGame(); } });
 
-    btnRebirth.addEventListener('click', () => {
+    document.getElementById('buy-ring').addEventListener('click', () => { if (score >= costRing && !hasSaturnRing) { score -= costRing; hasSaturnRing = true; buildMesh(); updateUI(); saveGame(); } });
+    document.getElementById('buy-neon').addEventListener('click', () => { if (score >= costNeon && !hasNeonAura) { score -= costNeon; hasNeonAura = true; buildMesh(); updateUI(); saveGame(); } });
+    document.getElementById('buy-orb').addEventListener('click', () => { if (score >= costOrb && !hasManaOrb) { score -= costOrb; hasManaOrb = true; buildMesh(); updateUI(); saveGame(); } });
+    document.getElementById('buy-quantum').addEventListener('click', () => { if (score >= costQuantum && !hasQuantumCore) { score -= costQuantum; hasQuantumCore = true; buildMesh(); updateUI(); saveGame(); } });
+
+    document.getElementById('btn-challenge-p5').addEventListener('click', () => {
+      if (phase5ChallengeDone) { alert("O Selo Místico já foi quebrado!"); return; }
+      const spells = ["LUMOS", "ALOHOMORA", "IPSUM", "AVADA", "PROTEGO"];
+      const targetSpell = spells[Math.floor(Math.random() * spells.length)];
+      const answer = prompt(`📜 DESAFIO MÍSTICO:\nDigite a palavra de conjuração exata: "${targetSpell}"`);
+      if (answer && answer.trim().toUpperCase() === targetSpell) {
+        phase5ChallengeDone = true;
+        alert("✨ SELO MÍSTICO QUEBRADO COM SUCESSO! Portal para a Fase 6 desbloqueado!");
+        updateUI(); saveGame();
+      } else {
+        alert("❌ Conjuração incorreta! Tente novamente.");
+      }
+    });
+
+    document.getElementById('buy-rebirth').addEventListener('click', () => {
       if (score >= costRebirth) {
         rebirths++; score = 0; clickPower = 1; autoClickers = 0; costClick = 10; costAuto = 25; costRebirth *= 4;
-        if (rebirths >= 3 && currentPhase === 1) currentPhase = 2;
         buildMesh(); updateUI(); saveGame();
       }
     });
@@ -602,32 +566,60 @@
       document.getElementById('cost-auto').textContent = costAuto.toLocaleString();
       document.getElementById('cost-rebirth').textContent = costRebirth.toLocaleString();
 
-      btnClick.disabled = score < costClick;
-      btnAuto.disabled = score < costAuto;
-      btnRebirth.disabled = score < costRebirth;
-      btnAdvance.style.display = (currentPhase === 2 && score >= 50000) ? 'flex' : 'none';
+      document.getElementById('buy-click').disabled = score < costClick;
+      document.getElementById('buy-auto').disabled = score < costAuto;
+      document.getElementById('buy-rebirth').disabled = score < costRebirth;
 
-      document.getElementById('space-pets-shop').style.display = currentPhase === 2 ? 'flex' : 'none';
-      document.getElementById('food-shop').style.display = currentPhase === 3 ? 'flex' : 'none';
+      const nextPhase = currentPhase + 1;
+      if (nextPhase <= 6 && score >= phaseThresholds[nextPhase]) {
+        document.getElementById('btn-advance-phase').style.display = 'flex';
+        document.getElementById('advance-text').textContent = `🌌 Entrar na Fase ${nextPhase}`;
+      } else {
+        document.getElementById('btn-advance-phase').style.display = 'none';
+      }
+
+      document.getElementById('p2-shop').style.display = currentPhase === 2 ? 'flex' : 'none';
+      document.getElementById('p3-shop').style.display = currentPhase === 3 ? 'flex' : 'none';
+      document.getElementById('p4-shop').style.display = currentPhase === 4 ? 'flex' : 'none';
+      document.getElementById('p5-shop').style.display = currentPhase === 5 ? 'flex' : 'none';
+      document.getElementById('p6-shop').style.display = currentPhase === 6 ? 'flex' : 'none';
+
+      document.getElementById('challenge-status').textContent = phase5ChallengeDone ? "Status: Desbloqueado 🔓" : "Status: Selado 🔒";
 
       let activeAttrs = [];
-      if (hasSaturnRing) activeAttrs.push("Saturno");
-      if (hasMarsColor) activeAttrs.push("Marte");
-      if (hasUranoIce) activeAttrs.push("Urano");
-      if (hasHotSauce) activeAttrs.push("Molho");
-      if (hasSprinkles) activeAttrs.push("Confeitos");
-      if (hasGoldenCover) activeAttrs.push("Ouro");
+      if (hasSaturnRing) activeAttrs.push("Anel 3D");
+      if (hasNeonAura) activeAttrs.push("Cubo Cyber 3D");
+      if (hasManaOrb) activeAttrs.push("Esfera 3D");
+      if (hasQuantumCore) activeAttrs.push("Anéis Quânticos 3D");
       document.getElementById('pets-list').textContent = activeAttrs.length > 0 ? activeAttrs.join(", ") : "Nenhum";
     }
 
+    let orbAngle = 0;
     function animate() {
       requestAnimationFrame(animate);
       if (currentMesh) {
         currentMesh.rotation.y += 0.008;
-        if (saturnRingMesh) saturnRingMesh.rotation.z += 0.005;
-        if (blackHoleDisk) blackHoleDisk.rotation.z += 0.03;
-        currentMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+        currentMesh.rotation.x += 0.003;
+        currentMesh.scale.lerp(targetScale, 0.1);
       }
+
+      if (neonCubeMesh) { neonCubeMesh.rotation.x += 0.01; neonCubeMesh.rotation.y += 0.01; }
+      if (manaOrbMesh) {
+        orbAngle += 0.03;
+        manaOrbMesh.position.x = Math.cos(orbAngle) * 2.3;
+        manaOrbMesh.position.z = Math.sin(orbAngle) * 2.3;
+      }
+      if (quantumCoreMesh) { quantumCoreMesh.rotation.z += 0.03; quantumCoreMesh.rotation.y += 0.02; }
+
+      if (starParticles && starParticles.visible) {
+        const positions = starParticles.geometry.attributes.position.array;
+        for (let i = 2; i < positions.length; i += 3) {
+          positions[i] += 0.5;
+          if (positions[i] > 20) positions[i] = -80;
+        }
+        starParticles.geometry.attributes.position.needsUpdate = true;
+      }
+
       renderer.render(scene, camera);
     }
 
@@ -637,6 +629,8 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
+    loadGame();
+    buildMesh();
     updateUI();
     animate();
   </script>
