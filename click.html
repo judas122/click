@@ -63,6 +63,64 @@
       cursor: pointer;
     }
 
+    /* MINIGAME FASE 5 MODAL */
+    #minigame-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 900;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .minigame-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid #a855f7;
+      box-shadow: 0 0 35px rgba(168, 85, 247, 0.4);
+      border-radius: 20px;
+      padding: 25px;
+      width: 330px;
+      text-align: center;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .minigame-card h2 { margin: 0; font-size: 20px; color: #c084fc; }
+    .minigame-card p { margin: 0; font-size: 13px; color: #94a3b8; }
+    #mg-stage-tracker {
+      font-weight: 800;
+      font-size: 14px;
+      color: #e879f9;
+      background: rgba(168, 85, 247, 0.15);
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    #minigame-canvas {
+      width: 200px;
+      height: 200px;
+      background: #090d16;
+      border-radius: 50%;
+      border: 2px solid rgba(168, 85, 247, 0.5);
+    }
+    .mg-action-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+    }
+    .mg-action-btn:active { transform: scale(0.98); }
+
     .hud-panel {
       position: absolute;
       background: rgba(15, 23, 42, 0.85);
@@ -165,6 +223,18 @@
     </div>
   </div>
 
+  <!-- MINIGAME OVERLAY FASE 5 (PROGRESSIVO) -->
+  <div id="minigame-overlay">
+    <div class="minigame-card">
+      <h2>🔮 Quebrar Selo Místico</h2>
+      <span id="mg-stage-tracker">Round 1 / 3</span>
+      <p>Clique no momento EXATO! A cada acerto, a velocidade aumenta!</p>
+      <canvas id="minigame-canvas" width="200" height="200"></canvas>
+      <button id="mg-trigger-btn" class="mg-action-btn">GOLPEAR SELO! ⚡</button>
+      <button id="mg-close-btn" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 12px; text-decoration: underline;">Cancelar</button>
+    </div>
+  </div>
+
   <div id="credits-tag">Desenvolvido por: <b>luiz pedro rouba pão</b></div>
 
   <div id="status-panel" class="hud-panel">
@@ -227,7 +297,7 @@
     <div id="p5-shop" style="display: none; flex-direction: column; gap: 8px;">
       <button id="buy-orb" class="shop-btn phase-specific-btn"><span>🔮 Esfera Mana 3D (x10 Pts)</span><small>Custo: <span id="cost-orb">200.000.000</span></small></button>
       <button id="btn-challenge-p5" class="shop-btn phase-specific-btn" style="background: linear-gradient(135deg, #a855f7, #6366f1) !important;">
-        <span>📜 Desafio Místico: Quebrar Selo</span>
+        <span>🎯 Desafio Progressivo (3 Rounds)</span>
         <small id="challenge-status">Status: Selado 🔒</small>
       </button>
     </div>
@@ -299,7 +369,6 @@
     const adminPanel = document.getElementById('admin-panel');
     const playerDisplay = document.getElementById('player-display');
 
-    /* VALIDAÇÃO DE NICK ADMIN ATUALIZADA */
     function checkAdminStatus(name) {
       if (name.trim().toLowerCase() === "patricia") {
         adminPanel.style.display = "flex";
@@ -503,7 +572,7 @@
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
     window.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('.hud-panel') || e.target.id === 'mobile-click-btn' || e.target.closest('#settings-btn') || e.target.closest('#login-overlay')) return;
+      if (e.target.closest('.hud-panel') || e.target.id === 'mobile-click-btn' || e.target.closest('#settings-btn') || e.target.closest('#login-overlay') || e.target.closest('#minigame-overlay')) return;
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
@@ -518,7 +587,7 @@
     document.getElementById('btn-advance-phase').addEventListener('click', () => {
       const nextP = currentPhase + 1;
       if (currentPhase === 5 && !phase5ChallengeDone) {
-        alert("🔒 Você precisa quebrar o Selo Místico na loja da Fase 5 para liberar a Fase 6!");
+        alert("🔒 Você precisa completar todos os 3 Rounds do Desafio para liberar a Fase 6!");
         return;
       }
       if (nextP <= 6 && score >= phaseThresholds[nextP]) {
@@ -535,18 +604,106 @@
     document.getElementById('buy-orb').addEventListener('click', () => { if (score >= costOrb && !hasManaOrb) { score -= costOrb; hasManaOrb = true; buildMesh(); updateUI(); saveGame(); } });
     document.getElementById('buy-quantum').addEventListener('click', () => { if (score >= costQuantum && !hasQuantumCore) { score -= costQuantum; hasQuantumCore = true; buildMesh(); updateUI(); saveGame(); } });
 
+    // --- MINIGAME FASE 5 COM DIFICULDADE PROGRESSIVA (3 ROUNDS) ---
+    const mgOverlay = document.getElementById('minigame-overlay');
+    const mgCanvas = document.getElementById('minigame-canvas');
+    const mgCtx = mgCanvas.getContext('2d');
+    const mgStageTracker = document.getElementById('mg-stage-tracker');
+
+    let mgAngle = 0;
+    let mgTargetStart = 0;
+    let mgTargetEnd = 0;
+    let mgActive = false;
+    let mgCurrentRound = 1;
+    const maxRounds = 3;
+
+    // Parâmetros de Dificuldade por Round
+    const roundConfig = {
+      1: { speed: 0.045, arcSize: 0.40 },  // Rápido, Área Média
+      2: { speed: 0.075, arcSize: 0.30 },  // Muito Rápido, Área Menor
+      3: { speed: 0.110, arcSize: 0.20 }   // Ultra Rápido, Área Estreita
+    };
+
+    function startRound(round) {
+      mgCurrentRound = round;
+      mgStageTracker.textContent = `Round ${mgCurrentRound} / ${maxRounds}`;
+      mgAngle = 0;
+      
+      const config = roundConfig[round];
+      // Define a área verde em um ponto aleatório do círculo
+      mgTargetStart = Math.PI * (0.1 + Math.random() * 0.7);
+      mgTargetEnd = mgTargetStart + (Math.PI * config.arcSize);
+    }
+
+    function drawMinigame() {
+      mgCtx.clearRect(0, 0, 200, 200);
+      
+      // Anel base
+      mgCtx.beginPath();
+      mgCtx.arc(100, 100, 70, 0, Math.PI * 2);
+      mgCtx.strokeStyle = '#1e293b';
+      mgCtx.lineWidth = 16;
+      mgCtx.stroke();
+
+      // Zona Verde Target
+      mgCtx.beginPath();
+      mgCtx.arc(100, 100, 70, mgTargetStart, mgTargetEnd);
+      mgCtx.strokeStyle = mgCurrentRound === 3 ? '#eab308' : '#22c55e'; // Amarelo no Round final
+      mgCtx.lineWidth = 16;
+      mgCtx.stroke();
+
+      // Ponteiro Giratório
+      const px = 100 + Math.cos(mgAngle) * 70;
+      const py = 100 + Math.sin(mgAngle) * 70;
+      mgCtx.beginPath();
+      mgCtx.arc(px, py, 12, 0, Math.PI * 2);
+      mgCtx.fillStyle = '#00f0ff';
+      mgCtx.fill();
+      mgCtx.strokeStyle = '#ffffff';
+      mgCtx.lineWidth = 3;
+      mgCtx.stroke();
+    }
+
+    function loopMinigame() {
+      if (!mgActive) return;
+      mgAngle = (mgAngle + roundConfig[mgCurrentRound].speed) % (Math.PI * 2);
+      drawMinigame();
+      requestAnimationFrame(loopMinigame);
+    }
+
     document.getElementById('btn-challenge-p5').addEventListener('click', () => {
-      if (phase5ChallengeDone) { alert("O Selo Místico já foi quebrado!"); return; }
-      const spells = ["LUMOS", "ALOHOMORA", "IPSUM", "AVADA", "PROTEGO"];
-      const targetSpell = spells[Math.floor(Math.random() * spells.length)];
-      const answer = prompt(`📜 DESAFIO MÍSTICO:\nDigite a palavra de conjuração exata: "${targetSpell}"`);
-      if (answer && answer.trim().toUpperCase() === targetSpell) {
-        phase5ChallengeDone = true;
-        alert("✨ SELO MÍSTICO QUEBRADO COM SUCESSO! Portal para a Fase 6 desbloqueado!");
-        updateUI(); saveGame();
+      if (phase5ChallengeDone) { alert("O Selo Místico já foi destruído permanentemente!"); return; }
+      mgOverlay.style.display = 'flex';
+      mgActive = true;
+      startRound(1);
+      loopMinigame();
+    });
+
+    document.getElementById('mg-trigger-btn').addEventListener('click', () => {
+      if (!mgActive) return;
+      
+      let normAngle = mgAngle % (Math.PI * 2);
+      if (normAngle >= mgTargetStart && normAngle <= mgTargetEnd) {
+        if (mgCurrentRound < maxRounds) {
+          alert(`⚡ EXCELENTE! Round ${mgCurrentRound} concluído! Prepare-se para o próximo...`);
+          startRound(mgCurrentRound + 1);
+        } else {
+          // Concluiu todos os rounds!
+          phase5ChallengeDone = true;
+          mgActive = false;
+          mgOverlay.style.display = 'none';
+          alert("💥 SELO DESTRUÍDO COM SUCESSO! Você dominou todos os 3 Rounds de velocidade! A Fase 6 está liberada!");
+          updateUI(); saveGame();
+        }
       } else {
-        alert("❌ Conjuração incorreta! Tente novamente.");
+        alert("❌ Errou o tempo! O selo repeliu seu golpe. Voltando ao Round 1!");
+        startRound(1);
       }
+    });
+
+    document.getElementById('mg-close-btn').addEventListener('click', () => {
+      mgActive = false;
+      mgOverlay.style.display = 'none';
     });
 
     document.getElementById('buy-rebirth').addEventListener('click', () => {
