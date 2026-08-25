@@ -126,6 +126,19 @@
       transition: opacity 0.15s ease;
       text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
     }
+    #status-msg {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #facc15;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      text-shadow: 0 0 15px rgba(250, 204, 21, 0.8);
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -139,11 +152,12 @@
       <div class="score-board">BOT <span id="bot-score">0</span></div>
     </div>
     <div id="hit-prompt">CLIQUE PARA REBATER!</div>
+    <div id="status-msg">NA REDE! RE-SAQUE</div>
   </div>
 
   <div id="menu">
     <h1>Ping Pong Pro</h1>
-    <p>A raquete segue o seu mouse.<br>Rebata a bola dentro da mesa adversária!</p>
+    <p>A raquete segue o seu mouse.<br>Rebata a bola na sua mesa e depois na do adversário!</p>
     <button class="diff-btn facil" onclick="startGame('facil')">Fácil</button>
     <button class="diff-btn medio" onclick="startGame('medio')">Médio</button>
     <button class="diff-btn dificil" onclick="startGame('dificil')">Difícil</button>
@@ -151,7 +165,6 @@
   </div>
 
   <script>
-    // Áudio SFX
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playSound(type) {
@@ -189,31 +202,34 @@
       }
     }
 
-    // Variáveis 3D
     let scene, camera, renderer;
     let table, ball, playerPaddleGroup, botPaddleGroup;
     
     const TABLE_WIDTH = 14;
     const TABLE_DEPTH = 26;
+    const NET_HEIGHT = 0.8;
     const GRAVITY = -0.008;
 
     let playerScore = 0;
     let botScore = 0;
     let currentDifficulty = 'medio';
     let gameActive = false;
+    let currentServer = 'player'; 
 
     let ballVelocity = new THREE.Vector3(0, 0, 0);
     let mousePos = { x: 0, y: 0 };
     let isHitting = false;
 
     let lastHitter = null;
-    let tableBounces = 0;
+    let playerSideBounces = 0;
+    let botSideBounces = 0;
 
+    // Ajustado o modo Fácil com arco maior (forceY) e mais impulso (forceZ)
     const botConfig = {
-      facil: { speed: 0.06, precision: 0.65 },
-      medio: { speed: 0.12, precision: 0.85 },
-      dificil: { speed: 0.22, precision: 0.95 },
-      impossivel: { speed: 0.42, precision: 1.0 }
+      facil: { speed: 0.06, precision: 0.65, forceZ: 0.27, forceY: 0.18, errorRate: 0.10 },
+      medio: { speed: 0.12, precision: 0.85, forceZ: 0.29, forceY: 0.17, errorRate: 0.02 },
+      dificil: { speed: 0.25, precision: 0.96, forceZ: 0.35, forceY: 0.18, errorRate: 0.0 },
+      impossivel: { speed: 0.45, precision: 1.0, forceZ: 0.42, forceY: 0.19, errorRate: 0.0 }
     };
 
     function init() {
@@ -233,7 +249,6 @@
       renderer.toneMappingExposure = 1.1;
       document.getElementById('game-container').appendChild(renderer.domElement);
 
-      // Luzes do Cenário
       const ambientLight = new THREE.AmbientLight(0x38bdf8, 0.25);
       scene.add(ambientLight);
 
@@ -246,7 +261,6 @@
       mainLight.shadow.mapSize.height = 2048;
       scene.add(mainLight);
 
-      // Luz de preenchimento azulada para o fundo
       const fillLight = new THREE.DirectionalLight(0x1e3a8a, 0.8);
       fillLight.position.set(0, 10, -20);
       scene.add(fillLight);
@@ -254,8 +268,8 @@
       createEnvironment();
       createTable();
       
-      playerPaddleGroup = createRealisticPaddle(0xef4444); // Vermelha
-      botPaddleGroup = createRealisticPaddle(0x3b82f6);    // Azul
+      playerPaddleGroup = createRealisticPaddle(0xef4444);
+      botPaddleGroup = createRealisticPaddle(0x3b82f6);
       
       playerPaddleGroup.position.set(0, 1.2, TABLE_DEPTH / 2 - 1);
       botPaddleGroup.position.set(0, 1.2, -TABLE_DEPTH / 2 + 1);
@@ -274,27 +288,19 @@
     }
 
     function createEnvironment() {
-      // Chão Polido
       const floorGeo = new THREE.PlaneGeometry(100, 100);
-      const floorMat = new THREE.MeshStandardMaterial({ 
-        color: 0x090d16, 
-        roughness: 0.2, 
-        metalness: 0.5 
-      });
+      const floorMat = new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.2, metalness: 0.5 });
       const floor = new THREE.Mesh(floorGeo, floorMat);
       floor.rotation.x = -Math.PI / 2;
       floor.position.y = -5;
       floor.receiveShadow = true;
       scene.add(floor);
 
-      // Paredes do Cenário (Arena)
       const wallMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 });
-      
       const backWall = new THREE.Mesh(new THREE.PlaneGeometry(100, 40), wallMat);
       backWall.position.set(0, 15, -40);
       scene.add(backWall);
 
-      // Moldura de LED Neon nas paredes de fundo
       const neonGeo = new THREE.BoxGeometry(40, 0.2, 0.2);
       const neonMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
       const neonTop = new THREE.Mesh(neonGeo, neonMat);
@@ -303,21 +309,14 @@
     }
 
     function createTable() {
-      // Tampo da Mesa Profissional
       const tableGeo = new THREE.BoxGeometry(TABLE_WIDTH, 0.5, TABLE_DEPTH);
-      const tableMat = new THREE.MeshStandardMaterial({ 
-        color: 0x0f4c81, // Azul Oficial de Competição
-        roughness: 0.35, 
-        metalness: 0.1 
-      });
+      const tableMat = new THREE.MeshStandardMaterial({ color: 0x0f4c81, roughness: 0.35, metalness: 0.1 });
       table = new THREE.Mesh(tableGeo, tableMat);
       table.position.y = -0.25;
       table.receiveShadow = true;
       scene.add(table);
 
-      // Linhas Brancas da Mesa
       const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      
       const side1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.52, TABLE_DEPTH), lineMat);
       side1.position.x = TABLE_WIDTH / 2;
       table.add(side1);
@@ -329,7 +328,6 @@
       const lineCenter = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.52, TABLE_DEPTH), lineMat);
       table.add(lineCenter);
 
-      // Pés da Mesa (Estrutura Metálica)
       const legGeo = new THREE.BoxGeometry(0.6, 5, 0.6);
       const legMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.2 });
       const positions = [
@@ -346,14 +344,13 @@
       });
 
       // Rede
-      const netGeo = new THREE.BoxGeometry(TABLE_WIDTH + 0.6, 0.8, 0.05);
+      const netGeo = new THREE.BoxGeometry(TABLE_WIDTH + 0.6, NET_HEIGHT, 0.1);
       const netMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.75, wireframe: true });
       const net = new THREE.Mesh(netGeo, netMat);
-      net.position.set(0, 0.4, 0);
+      net.position.set(0, NET_HEIGHT / 2, 0);
       net.castShadow = true;
       scene.add(net);
 
-      // Suportes da Rede
       const postGeo = new THREE.CylinderGeometry(0.08, 0.08, 1, 16);
       const postMat = new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.9 });
       const post1 = new THREE.Mesh(postGeo, postMat);
@@ -366,7 +363,6 @@
 
     function createRealisticPaddle(rubberColor) {
       const paddleGroup = new THREE.Group();
-
       const headShape = new THREE.Shape();
       headShape.absarc(0, 0.3, 1.1, 0, Math.PI * 2, false);
       const extrudeSettings = { depth: 0.12, bevelEnabled: true, bevelSegments: 4, steps: 1, bevelSize: 0.05, bevelThickness: 0.05 };
@@ -393,14 +389,30 @@
       ball = new THREE.Mesh(ballGeo, ballMat);
       ball.castShadow = true;
       scene.add(ball);
-      resetBall();
     }
 
-    function resetBall() {
-      ball.position.set(0, 2, TABLE_DEPTH / 2 - 2);
-      ballVelocity.set((Math.random() - 0.5) * 0.08, 0.1, -0.25);
-      lastHitter = 'player';
-      tableBounces = 0;
+    function showStatus(msg) {
+      const el = document.getElementById('status-msg');
+      el.innerText = msg;
+      el.style.opacity = '1';
+      setTimeout(() => el.style.opacity = '0', 1000);
+    }
+
+    function resetBall(server = currentServer) {
+      currentServer = server;
+      playerSideBounces = 0;
+      botSideBounces = 0;
+      lastHitter = server;
+
+      if (server === 'player') {
+        ball.position.set(0, 2.2, TABLE_DEPTH / 2 - 2);
+        ballVelocity.set((Math.random() - 0.5) * 0.04, 0.16, -0.25);
+      } else {
+        const cfg = botConfig[currentDifficulty];
+        ball.position.set((Math.random() - 0.5) * 2, 2.5, -TABLE_DEPTH / 2 + 2);
+        ballVelocity.set((Math.random() - 0.5) * 0.04, cfg.forceY, cfg.forceZ);
+        playSound('hit');
+      }
     }
 
     function startGame(difficulty) {
@@ -410,7 +422,7 @@
       updateScoreUI();
       document.getElementById('menu').style.display = 'none';
       gameActive = true;
-      resetBall();
+      resetBall('player');
     }
 
     function onMouseMove(e) {
@@ -425,10 +437,8 @@
 
     function onMouseClick() {
       if (!gameActive) return;
-
       isHitting = true;
       playerPaddleGroup.position.z -= 0.6;
-
       setTimeout(() => {
         playerPaddleGroup.position.z = TABLE_DEPTH / 2 - 1;
         isHitting = false;
@@ -439,9 +449,12 @@
       if (!gameActive) return;
 
       const config = botConfig[currentDifficulty];
-      
       let targetX = ball.position.x * config.precision;
       let targetY = Math.max(0.8, ball.position.y);
+
+      if (Math.random() < config.errorRate) {
+        targetX += (Math.random() - 0.5) * 2;
+      }
 
       botPaddleGroup.position.x += (targetX - botPaddleGroup.position.x) * config.speed;
       botPaddleGroup.position.y += (targetY - botPaddleGroup.position.y) * config.speed;
@@ -454,13 +467,14 @@
         const dx = Math.abs(ball.position.x - botPaddleGroup.position.x);
         const dy = Math.abs(ball.position.y - botPaddleGroup.position.y);
 
-        if (dx < 2.0 && dy < 2.0) {
-          ballVelocity.z = Math.abs(ballVelocity.z);
-          ballVelocity.x = (playerPaddleGroup.position.x - botPaddleGroup.position.x) * 0.08;
-          ballVelocity.y = 0.12;
+        if (dx < 1.8 && dy < 1.8) {
+          ballVelocity.z = config.forceZ;
+          ballVelocity.x = (playerPaddleGroup.position.x - botPaddleGroup.position.x) * 0.06;
+          ballVelocity.y = config.forceY;
 
           lastHitter = 'bot';
-          tableBounces = 0;
+          playerSideBounces = 0;
+          botSideBounces = 0;
           playSound('hit');
         }
       }
@@ -474,7 +488,7 @@
       }
       playSound('score');
       updateScoreUI();
-      checkGameOver() || resetBall();
+      checkGameOver() || resetBall(winner);
     }
 
     function updatePhysics() {
@@ -486,22 +500,46 @@
       const onTableX = Math.abs(ball.position.x) <= TABLE_WIDTH / 2;
       const onTableZ = Math.abs(ball.position.z) <= TABLE_DEPTH / 2;
 
+      // Colisão na Mesa
       if (ball.position.y <= 0.32 && onTableX && onTableZ) {
         ball.position.y = 0.32;
         ballVelocity.y = Math.abs(ballVelocity.y) * 0.85;
         playSound('bounce');
-        tableBounces++;
+
+        if (ball.position.z > 0) {
+          playerSideBounces++;
+        } else {
+          botSideBounces++;
+        }
       }
 
-      if (ball.position.y < -3) {
-        if (tableBounces === 0) {
-          scorePoint(lastHitter === 'player' ? 'bot' : 'player');
-        } else {
-          scorePoint(lastHitter);
+      // Colisão direta na REDE -> Re-saque instantâneo sem som e sem trancar
+      if (Math.abs(ball.position.z) < 0.35 && ball.position.y <= NET_HEIGHT + 0.15 && onTableX) {
+        ballVelocity.set(0, 0, 0);
+        showStatus("NA REDE! RE-SAQUE");
+        resetBall(currentServer);
+        return;
+      }
+
+      // Pontuação fora da mesa
+      if (ball.position.y < -3 || Math.abs(ball.position.z) > TABLE_DEPTH / 2 + 5) {
+        if (lastHitter === 'player') {
+          if (botSideBounces >= 1) {
+            scorePoint('player');
+          } else {
+            scorePoint('bot');
+          }
+        } else if (lastHitter === 'bot') {
+          if (playerSideBounces >= 1) {
+            scorePoint('bot');
+          } else {
+            scorePoint('player');
+          }
         }
         return;
       }
 
+      // Prompt para bater
       const distToPlayer = playerPaddleGroup.position.z - ball.position.z;
       const hitPrompt = document.getElementById('hit-prompt');
       
@@ -511,6 +549,7 @@
         hitPrompt.style.opacity = '0';
       }
 
+      // Rebater do Jogador
       if (distToPlayer <= 1.0 && distToPlayer >= -0.3) {
         const dx = Math.abs(ball.position.x - playerPaddleGroup.position.x);
         const dy = Math.abs(ball.position.y - playerPaddleGroup.position.y);
@@ -518,10 +557,11 @@
         if (dx < 1.8 && dy < 1.8 && isHitting) {
           ballVelocity.z = -Math.abs(ballVelocity.z) * 1.03 - 0.02;
           ballVelocity.x = (ball.position.x - playerPaddleGroup.position.x) * 0.12;
-          ballVelocity.y = 0.12;
+          ballVelocity.y = 0.15;
           
           lastHitter = 'player';
-          tableBounces = 0;
+          playerSideBounces = 0;
+          botSideBounces = 0;
           playSound('hit');
         }
       }
