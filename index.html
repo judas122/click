@@ -40,7 +40,7 @@
       flex-wrap: wrap;
       justify-content: center;
       padding: 20px;
-      max-width: 900px;
+      max-width: 1000px;
     }
     .card {
       background: rgba(15, 23, 42, 0.75);
@@ -63,9 +63,18 @@
       border-color: #38bdf8;
       box-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
     }
+    /* Estilo especial para hover no card de terror */
+    .card-horror:hover {
+      border-color: #ff2222;
+      box-shadow: 0 0 25px rgba(255, 34, 34, 0.4);
+    }
+    .card-horror .btn-play {
+      background: #ff2222;
+      color: #fff;
+    }
     .card-icon { font-size: 55px; margin-bottom: 15px; }
     .card-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; color: #f8fafc; }
-    .card-desc { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
+    .card-desc { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; flex-grow: 1; }
     .btn-play {
       margin-top: 20px;
       background: #38bdf8;
@@ -107,6 +116,14 @@
       <div class="card-icon">🏓</div>
       <div class="card-title">Ping Pong Pro</div>
       <div class="card-desc">Jogo de tênis de mesa em 3D. Enfrente o bot nos níveis Fácil até Impossível!</div>
+      <div class="btn-play">Jogar</div>
+    </a>
+
+    <!-- Card do Jogo 3 (The Anomaly) -->
+    <a href="anomalia.html" class="card card-horror">
+      <div class="card-icon">👁️</div>
+      <div class="card-title">The Anomaly</div>
+      <div class="card-desc">Escape do labirinto 3D Backrooms. Não se mexa enquanto a Anomalia te encara!</div>
       <div class="btn-play">Jogar</div>
     </a>
   </div>
