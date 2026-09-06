@@ -56,17 +56,88 @@
     let maxDistance = 0;
     let gameState = 'TOWER';
 
-    const spriteSheet = new Image();
-    let isLoaded = false;
-    spriteSheet.onload = () => { isLoaded = true; };
-    spriteSheet.src = 'bichos.png-removebg-preview.png';
+    // Matriz de pixel art exata do Pintinho conforme o seu desenho original
+    const chickMatrix = [
+      "....RR..........",
+      "....RR..........",
+      "..YYYYYYYY......",
+      ".YYYYYYYYYY.....",
+      ".YYYYBYYYY......",
+      ".YYYYYYYYYYOO...",
+      "YYYYYYYYYYYYOO..",
+      "YYYYYYYYYYYY....",
+      ".YYYYYYYYYY.....",
+      "..YYYYYYYY......",
+      "....FF..FF......",
+      "....FF..FF......"
+    ];
 
     const animals = [
-      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, size: 64 },
-      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, size: 68 },
-      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, size: 64 },
-      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, size: 76 },
-      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, size: 84 }
+      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, size: 64, matrix: chickMatrix },
+      { 
+        name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, size: 68,
+        matrix: [
+          "..RRRR..........",
+          "..RRRR..........",
+          "..WWWWWW........",
+          ".WWWWWWWW.......",
+          ".WWWWBWCCC......",
+          ".WWWWWWWWCCC....",
+          "WWWWWWWWWW......",
+          "WWWWWWWWWW......",
+          ".WWWWWWWW.......",
+          "..WWWWWW........",
+          "....FF..FF......",
+          "....FF..FF......"
+        ]
+      },
+      { 
+        name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, size: 64,
+        matrix: [
+          "................",
+          "....BB..........",
+          "..BBBBBB........",
+          ".BBBBBBBB.......",
+          ".BBBBWBB........",
+          ".BBBBBBBBEE.....",
+          "BBBBBBBBBBEE....",
+          "BBBBBBBBBB......",
+          ".BBBBBBBB.......",
+          "..BBBBBB........",
+          "....FF..FF......",
+          "................"
+        ]
+      },
+      { 
+        name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, size: 76,
+        matrix: [
+          "..DDDD..........",
+          ".DDDDDD.........",
+          ".DDDDWDD........",
+          "DDDDDDDDYY......",
+          "DDDDDDDDYY......",
+          "DDDDDDDD........",
+          ".DDDDDD.........",
+          "..DDDD..........",
+          "....DD..........",
+          "................"
+        ]
+      },
+      { 
+        name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, size: 84,
+        matrix: [
+          "....GG..........",
+          "...GGGG.........",
+          "..GGGGGG........",
+          ".GGGGWGG........",
+          "GGGGGGGGYY......",
+          "GGGGGGGGYY......",
+          "GGGGGGGG........",
+          ".GGGGGG.........",
+          "..GGGG..........",
+          "....GG.........."
+        ]
+      }
     ];
 
     let towerLevel = 1;
@@ -155,6 +226,39 @@
       }
     }
 
+    function drawPixelArt(x, y, w, h, matrix) {
+      const rows = matrix.length;
+      const cols = matrix[0].length;
+      const pixelW = w / cols;
+      const pixelH = h / rows;
+
+      const colorMap = {
+        'R': '#dc2626', // Vermelho (crista)
+        'Y': '#ffd700', // Amarelo (corpo do pintinho)
+        'B': '#000000', // Preto (olho)
+        'O': '#f97316', // Laranja (bico)
+        'W': '#f5f5f5', // Branco
+        'C': '#b45309', // Marrom
+        'E': '#38bdf8', // Azul
+        'D': '#854d0e', // Marrom águia
+        'G': '#16a34a', // Verde dragão
+        'F': '#b45309'  // Pés
+      };
+
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const char = matrix[r][c];
+          if (colorMap[char]) {
+            ctx.fillStyle = colorMap[char];
+            ctx.fillRect(x + c * pixelW, y + r * pixelH, pixelW + 0.5, pixelH + 0.5);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
     function gameLoop() {
       if (canvas.width === 0 || canvas.height === 0) resizeCanvas();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -218,7 +322,7 @@
       ctx.fillRect(600, 180, 100, 30);
       ctx.fillRect(1100, 80, 120, 35);
 
-      // Torre com corte limpo nas bordas para alinhar os tijolos perfeitamente
+      // Torre com corte limpo nas bordas para alinhar os tijolos perfeitamente sem rebarbas
       ctx.save();
       ctx.beginPath();
       ctx.rect(0, towerTopY, towerWidth, towerHeight);
@@ -254,17 +358,7 @@
         ctx.fillText(`${d - towerWidth}m`, d - 14, groundY + 32);
       }
 
-      const currentAnimal = animals[petIndex];
-      if (isLoaded && spriteSheet.complete && spriteSheet.naturalHeight > 0) {
-        const frameWidth = spriteSheet.naturalWidth;
-        const frameHeight = spriteSheet.naturalHeight / 5;
-
-        ctx.drawImage(
-          spriteSheet,
-          0, currentAnimal.frame * frameHeight, frameWidth, frameHeight,
-          player.x, player.y, player.width, player.height
-        );
-      }
+      drawPixelArt(player.x, player.y, player.width, player.height, animals[petIndex].matrix);
 
       if (gameState === 'FLYING') {
         ctx.fillStyle = '#2e7d32';
