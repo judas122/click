@@ -176,13 +176,13 @@
     spriteSheet.onload = () => { isLoaded = true; };
     spriteSheet.src = 'bichos.png-removebg-preview.png';
 
-    // Ajuste de proporções e posições exatas
+    // Proporções verticais ajustadas para manter o aspecto correto de cada bicho
     const animals = [
-      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, w: 32, h: 42 },
-      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, w: 42, h: 46 },
-      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, w: 44, h: 38 },
-      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, w: 52, h: 52 },
-      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, w: 58, h: 58 }
+      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, w: 45, h: 55 },
+      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, w: 50, h: 58 },
+      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, w: 50, h: 48 },
+      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, w: 60, h: 65 },
+      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, w: 65, h: 70 }
     ];
 
     let towerLevel = 1;
@@ -197,8 +197,8 @@
       vy: 0,
       isGrounded: false,
       flapsLeft: 0,
-      width: 32,
-      height: 42
+      width: 45,
+      height: 55
     };
 
     let cameraX = 0;
@@ -404,7 +404,7 @@
         ctx.fillText(`${d - towerWidth}m`, d - 12, groundY + 32);
       }
 
-      // Renderiza o bicho com recorte proporcional (sem achatar)
+      // Renderização com recorte e proporção corrigidos
       const currentAnimal = animals[petIndex];
       if (isLoaded && spriteSheet.naturalWidth > 0) {
         const frameWidth = spriteSheet.naturalWidth / 5;
