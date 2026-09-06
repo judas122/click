@@ -56,7 +56,6 @@
     let maxDistance = 0;
     let gameState = 'TOWER';
 
-    // Carregamento correto da sprite sheet original (com os 5 bichos dispostos horizontalmente)
     const spriteSheet = new Image();
     let isLoaded = false;
     spriteSheet.onload = () => { isLoaded = true; };
@@ -219,7 +218,6 @@
       ctx.fillRect(600, 180, 100, 30);
       ctx.fillRect(1100, 80, 120, 35);
 
-      // Torre com corte limpo e estrito nas bordas (sem rebarbas ou tijolos escapando)
       ctx.save();
       ctx.beginPath();
       ctx.rect(0, towerTopY, towerWidth, towerHeight);
@@ -255,17 +253,24 @@
         ctx.fillText(`${d - towerWidth}m`, d - 14, groundY + 32);
       }
 
-      // Renderização correta da sprite sheet horizontal original
+      // CORREÇÃO EXATA DO CORTE DA SPRITE SHEET
       const currentAnimal = animals[petIndex];
       if (isLoaded && spriteSheet.complete && spriteSheet.naturalWidth > 0) {
-        const frameWidth = spriteSheet.naturalWidth / 5;
-        const frameHeight = spriteSheet.naturalHeight;
+        const totalW = spriteSheet.naturalWidth;
+        const totalH = spriteSheet.naturalHeight;
+        const frameW = totalW / 5;
+        
+        // Recorta apenas a região inferior da imagem onde os sprites estão posicionados
+        const srcX = currentAnimal.frame * frameW;
+        const srcY = totalH * 0.55; 
+        const srcW = frameW;
+        const srcH = totalH * 0.45;
 
         ctx.save();
         ctx.imageSmoothingEnabled = false;
         ctx.drawImage(
           spriteSheet,
-          currentAnimal.frame * frameWidth, 0, frameWidth, frameHeight,
+          srcX, srcY, srcW, srcH,
           player.x, player.y, player.width, player.height
         );
         ctx.restore();
