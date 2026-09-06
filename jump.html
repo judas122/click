@@ -62,11 +62,11 @@
     spriteSheet.src = 'bichos.png-removebg-preview.png';
 
     const animals = [
-      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, width: 48, height: 64 },
-      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, width: 52, height: 68 },
-      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, width: 48, height: 64 },
-      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, width: 56, height: 76 },
-      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, width: 64, height: 84 }
+      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, size: 42 },
+      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, size: 46 },
+      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, size: 42 },
+      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, size: 50 },
+      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, size: 56 }
     ];
 
     let towerLevel = 1;
@@ -80,8 +80,8 @@
       vy: 0,
       isGrounded: false,
       flapsLeft: 2,
-      width: animals[0].width,
-      height: animals[0].height
+      width: 42,
+      height: 42
     };
 
     window.addEventListener('keydown', (e) => {
@@ -127,8 +127,8 @@
       if (coins >= cost && petIndex < animals.length - 1) {
         coins -= cost;
         petIndex++;
-        player.width = animals[petIndex].width;
-        player.height = animals[petIndex].height;
+        player.width = animals[petIndex].size;
+        player.height = animals[petIndex].size;
         resetToTower();
         updateUI();
       }
@@ -139,8 +139,8 @@
       gameState = 'TOWER';
       const groundY = canvas.height - 80;
       const towerHeight = 150 + (towerLevel * 60);
-      player.width = animals[petIndex].width;
-      player.height = animals[petIndex].height;
+      player.width = animals[petIndex].size;
+      player.height = animals[petIndex].size;
       player.x = 80;
       player.y = groundY - towerHeight - player.height;
       player.vx = 0;
@@ -196,7 +196,7 @@
         player.vx = Math.max(1.5, player.vx - 0.004);
 
         if (player.y >= groundY - player.height) {
-          player.y = groundY - player.height; // Garante que toca perfeitamente o chão
+          player.y = groundY - player.height; // Encaixe perfeito no chão exato (groundY)
           gameState = 'GAMEOVER';
           const distanceEarned = Math.floor(player.x - towerWidth);
           const earnedCoins = Math.max(0, Math.floor(distanceEarned / 12));
@@ -255,18 +255,17 @@
         ctx.fillText(`${d - towerWidth}m`, d - 14, groundY + 32);
       }
 
-      // CORREÇÃO CORRETA DE ASPECTO RATIO (SEM ACHATAR)
+      // RENDERIZAÇÃO PERFEITA E PROPORCIONAL DO SPRITE
       const currentAnimal = animals[petIndex];
       if (isLoaded && spriteSheet.complete && spriteSheet.naturalWidth > 0) {
         const totalW = spriteSheet.naturalWidth;
         const totalH = spriteSheet.naturalHeight;
         const frameW = totalW / 5;
         
-        // Recorta mantendo a proporção vertical correta (sem esmagar)
-        const srcW = Math.min(frameW, totalH * 0.8);
-        const srcH = totalH;
-        const srcX = (currentAnimal.frame * frameW) + (frameW - srcW) / 2;
+        const srcX = currentAnimal.frame * frameW;
         const srcY = 0;
+        const srcW = frameW;
+        const srcH = totalH;
 
         ctx.save();
         ctx.imageSmoothingEnabled = false;
