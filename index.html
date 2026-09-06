@@ -3,59 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plataforma de Jogos</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <title>Sala do Futuro - Plataforma de Jogos</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22transparent%22/><text x=%2250%%22 y=%2255%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-family=%22Arial, sans-serif%22 font-weight=%22900%22 font-size=%2265%22 fill=%22%2338bdf8%22>SF</text></svg>">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #121c12;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0b0d12;
       color: #fff;
-      font-family: 'Press Start 2P', cursive;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      overflow-x: hidden;
     }
-    #navbar {
-      width: 100%;
-      height: 60px;
-      background: #1b3022;
-      border-bottom: 4px solid #2e7d32;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    header {
+      margin-top: 50px;
+      text-align: center;
       padding: 0 20px;
     }
-    .nav-logo { color: #ffd700; font-size: 12px; }
-    .nav-menu { display: flex; gap: 10px; }
-    .nav-item {
-      color: #fff;
-      font-size: 8px;
-      text-decoration: none;
-      padding: 8px 12px;
-      background: #2d4a35;
-      border: 2px solid #1b3022;
-      border-radius: 4px;
+    h1 {
+      font-size: 2.8rem;
+      color: #38bdf8;
+      margin-bottom: 8px;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 800;
     }
-    .nav-item:hover { background: #4a7c59; }
-    #game-frame {
-      width: 100%;
-      height: calc(100vh - 60px);
-      border: none;
+    p { color: #94a3b8; font-size: 1.1rem; }
+    
+    .grid {
+      display: flex;
+      gap: 30px;
+      margin-top: 50px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+      max-width: 1200px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      width: 280px;
+      padding: 25px 20px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: #38bdf8;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+    }
+    .card-horror:hover {
+      border-color: #ff2222;
+      box-shadow: 0 0 25px rgba(255, 34, 34, 0.4);
+    }
+    .card-horror .btn-play {
+      background: #ff2222;
+      color: #fff;
+    }
+    .card-icon { font-size: 55px; margin-bottom: 15px; }
+    .card-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; color: #f8fafc; }
+    .card-desc { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; flex-grow: 1; }
+    .btn-play {
+      margin-top: 20px;
+      background: #38bdf8;
+      color: #0b0d12;
+      font-weight: bold;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    footer {
+      margin-top: auto;
+      padding: 25px;
+      font-size: 13px;
+      color: #64748b;
     }
   </style>
 </head>
 <body>
 
-  <nav id="navbar">
-    <div class="nav-logo">🎮 MINHA PLATAFORMA</div>
-    <div class="nav-menu">
-      <a href="anomalia.html" target="game-iframe" class="nav-item">Anomalia</a>
-      <a href="jump.html" target="game-iframe" class="nav-item">Jogo da Torre</a>
-    </div>
-  </nav>
+  <header>
+    <h1>Portal de Jogos 🎮</h1>
+    <p>Selecione um jogo para começar a jogar</p>
+  </header>
 
-  <iframe name="game-iframe" id="game-frame" src="anomalia.html"></iframe>
+  <div class="grid">
+    <!-- Card do Jogo 1 (Clicker 3D) -->
+    <a href="click.html" class="card">
+      <div class="card-icon">🪐</div>
+      <div class="card-title">Clicker 3D</div>
+      <div class="card-desc">Evolua formas geométricas, planetas e donuts no simulador espacial!</div>
+      <div class="btn-play">Jogar</div>
+    </a>
+
+    <!-- Card do Jogo 2 (Ping Pong 3D) -->
+    <a href="pingpong.html" class="card">
+      <div class="card-icon">🏓</div>
+      <div class="card-title">Ping Pong Pro</div>
+      <div class="card-desc">Jogo de tênis de mesa em 3D. Enfrente o bot nos níveis Fácil até Impossível!</div>
+      <div class="btn-play">Jogar</div>
+    </a>
+
+    <!-- Card do Jogo 3 (The Anomaly) -->
+    <a href="anomalia.html" class="card card-horror">
+      <div class="card-icon">👁️</div>
+      <div class="card-title">The Anomaly</div>
+      <div class="card-desc">Escape do labirinto 3D Backrooms. Não se mexa enquanto a Anomalia te encara!</div>
+      <div class="btn-play">Jogar</div>
+    </a>
+
+    <!-- Card do Jogo 4 (Tower Leap 2D) -->
+    <a href="jump.html" class="card">
+      <div class="card-icon">🐥</div>
+      <div class="card-title">Tower Leap 2D</div>
+      <div class="card-desc">Suba na torre, evolua seu bicho e voe o mais longe que conseguir!</div>
+      <div class="btn-play">Jogar</div>
+    </a>
+  </div>
+
+  <footer>
+    Desenvolvido por: <b>judas122</b>
+  </footer>
 
 </body>
 </html>
