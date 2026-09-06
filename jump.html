@@ -161,14 +161,15 @@
     let isLoaded = false;
     
     spriteSheet.onload = () => { isLoaded = true; };
+    spriteSheet.onerror = () => { isLoaded = false; };
     spriteSheet.src = 'bichos.png-removebg-preview.png';
 
     const animals = [
-      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, size: 64 },
-      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, size: 68 },
-      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, size: 64 },
-      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, size: 76 },
-      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, size: 84 }
+      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, size: 64, color: '#ffd700' },
+      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, size: 68, color: '#f5f5f5' },
+      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, size: 64, color: '#38bdf8' },
+      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, size: 76, color: '#854d0e' },
+      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, size: 84, color: '#16a34a' }
     ];
 
     let towerLevel = 1;
@@ -283,6 +284,42 @@
       }
     }
 
+    function drawCustomCharacter(x, y, w, h, index) {
+      const pet = animals[index];
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Corpo principal
+      ctx.fillStyle = pet.color;
+      ctx.fillRect(w * 0.2, h * 0.3, w * 0.6, h * 0.5);
+
+      // Cabeça
+      ctx.fillRect(w * 0.5, h * 0.1, w * 0.35, h * 0.4);
+
+      // Olho
+      ctx.fillStyle = '#000';
+      ctx.fillRect(w * 0.7, h * 0.2, w * 0.1, h * 0.1);
+
+      // Bico
+      ctx.fillStyle = '#f97316';
+      ctx.fillRect(w * 0.85, h * 0.25, w * 0.15, h * 0.15);
+
+      // Detalhe específico (Crista da galinha/pintinho ou chifre do dragão)
+      if (index === 0 || index === 1) {
+        ctx.fillStyle = '#dc2626'; // Crista vermelha
+        ctx.fillRect(w * 0.6, h * 0.0, w * 0.15, h * 0.15);
+      } else if (index === 4) {
+        ctx.fillStyle = '#b91c1c'; // Asas/Espinhos do dragão
+        ctx.fillRect(w * 0.2, h * 0.15, w * 0.2, h * 0.2);
+      }
+
+      // Asinha
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(w * 0.3, h * 0.4, w * 0.25, h * 0.25);
+
+      ctx.restore();
+    }
+
     function gameLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -390,9 +427,9 @@
         ctx.fillText(`${d - towerWidth}m`, d - 14, groundY + 32);
       }
 
-      // Renderização do bicho corrigida
+      // Renderização do bicho (Usa a imagem se carregar, senão usa o desenho customizado perfeito)
       const currentAnimal = animals[petIndex];
-      if (isLoaded && spriteSheet.naturalHeight > 0) {
+      if (isLoaded && spriteSheet.complete && spriteSheet.naturalHeight > 0) {
         const frameWidth = spriteSheet.naturalWidth;
         const frameHeight = spriteSheet.naturalHeight / 5;
 
@@ -401,6 +438,8 @@
           0, currentAnimal.frame * frameHeight, frameWidth, frameHeight,
           player.x, player.y, player.width, player.height
         );
+      } else {
+        drawCustomCharacter(player.x, player.y, player.width, player.height, petIndex);
       }
 
       if (gameState === 'FLYING') {
