@@ -56,12 +56,17 @@
     let maxDistance = 0;
     let gameState = 'TOWER';
 
+    const spriteSheet = new Image();
+    let isLoaded = false;
+    spriteSheet.onload = () => { isLoaded = true; };
+    spriteSheet.src = 'bichos.png-removebg-preview.png';
+
     const animals = [
-      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, size: 64, color: '#ffd700' },
-      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, size: 68, color: '#f5f5f5' },
-      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, size: 64, color: '#38bdf8' },
-      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, size: 76, color: '#854d0e' },
-      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, size: 84, color: '#16a34a' }
+      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, size: 64 },
+      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, size: 68 },
+      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, size: 64 },
+      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, size: 76 },
+      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, size: 84 }
     ];
 
     let towerLevel = 1;
@@ -150,27 +155,6 @@
       }
     }
 
-    function drawCharacter(x, y, w, h, index) {
-      const pet = animals[index];
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.fillStyle = pet.color;
-      ctx.fillRect(w * 0.2, h * 0.3, w * 0.6, h * 0.5);
-      ctx.fillRect(w * 0.5, h * 0.1, w * 0.35, h * 0.4);
-      ctx.fillStyle = '#000';
-      ctx.fillRect(w * 0.7, h * 0.2, w * 0.1, h * 0.1);
-      ctx.fillStyle = '#f97316';
-      ctx.fillRect(w * 0.85, h * 0.25, w * 0.15, w * 0.15);
-      if (index === 0 || index === 1) {
-        ctx.fillStyle = '#dc2626';
-        ctx.fillRect(w * 0.6, h * 0.02, w * 0.15, h * 0.15);
-      } else if (index === 4) {
-        ctx.fillStyle = '#b91c1c';
-        ctx.fillRect(w * 0.2, h * 0.15, w * 0.2, h * 0.2);
-      }
-      ctx.restore();
-    }
-
     function gameLoop() {
       if (canvas.width === 0 || canvas.height === 0) resizeCanvas();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -234,18 +218,23 @@
       ctx.fillRect(600, 180, 100, 30);
       ctx.fillRect(1100, 80, 120, 35);
 
+      // Torre com corte limpo nas bordas para alinhar os tijolos perfeitamente
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, towerTopY, towerWidth, towerHeight);
+      ctx.clip();
+
       ctx.fillStyle = '#8b4513';
       ctx.fillRect(0, towerTopY, towerWidth, towerHeight);
       ctx.fillStyle = '#6a320b';
       for (let ty = towerTopY; ty < groundY; ty += 16) {
         for (let tx = 0; tx < towerWidth; tx += 32) {
           let shift = (Math.floor(ty / 16) % 2 === 0) ? 0 : 16;
-          let brickWidth = Math.min(28, towerWidth - (tx + shift));
-          if (brickWidth > 0) {
-            ctx.fillRect(tx + shift, ty, brickWidth, 14);
-          }
+          ctx.fillRect(tx + shift, ty, 30, 14);
         }
       }
+      ctx.restore();
+
       ctx.fillStyle = '#4ca64c';
       ctx.fillRect(0, towerTopY - 6, towerWidth + 4, 8);
       ctx.fillStyle = '#2e7d32';
@@ -265,7 +254,17 @@
         ctx.fillText(`${d - towerWidth}m`, d - 14, groundY + 32);
       }
 
-      drawCharacter(player.x, player.y, player.width, player.height, petIndex);
+      const currentAnimal = animals[petIndex];
+      if (isLoaded && spriteSheet.complete && spriteSheet.naturalHeight > 0) {
+        const frameWidth = spriteSheet.naturalWidth;
+        const frameHeight = spriteSheet.naturalHeight / 5;
+
+        ctx.drawImage(
+          spriteSheet,
+          0, currentAnimal.frame * frameHeight, frameWidth, frameHeight,
+          player.x, player.y, player.width, player.height
+        );
+      }
 
       if (gameState === 'FLYING') {
         ctx.fillStyle = '#2e7d32';
