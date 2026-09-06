@@ -20,7 +20,6 @@
       overflow: hidden;
     }
 
-    /* Container do Jogo */
     #game-container {
       position: relative;
       display: flex;
@@ -171,18 +170,17 @@
     let maxDistance = 0;
     let gameState = 'TOWER';
 
-    // Carregamento da Sprite Sheet dos Bichos
     const spriteSheet = new Image();
     let isLoaded = false;
     
     spriteSheet.onload = () => { isLoaded = true; };
-    spriteSheet.onerror = () => { console.error("Erro ao carregar bichos.png-removebg-preview.png"); };
     spriteSheet.src = 'bichos.png-removebg-preview.png';
 
+    // Ajuste de proporções e posições exatas
     const animals = [
-      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, w: 42, h: 42 },
-      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, w: 45, h: 45 },
-      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, w: 48, h: 42 },
+      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, w: 32, h: 42 },
+      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, w: 42, h: 46 },
+      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, w: 44, h: 38 },
       { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, w: 52, h: 52 },
       { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, w: 58, h: 58 }
     ];
@@ -199,7 +197,7 @@
       vy: 0,
       isGrounded: false,
       flapsLeft: 0,
-      width: 42,
+      width: 32,
       height: 42
     };
 
@@ -406,7 +404,7 @@
         ctx.fillText(`${d - towerWidth}m`, d - 12, groundY + 32);
       }
 
-      // Renderiza o bicho recortado da imagem
+      // Renderiza o bicho com recorte proporcional (sem achatar)
       const currentAnimal = animals[petIndex];
       if (isLoaded && spriteSheet.naturalWidth > 0) {
         const frameWidth = spriteSheet.naturalWidth / 5;
@@ -417,10 +415,6 @@
           currentAnimal.frame * frameWidth, 0, frameWidth, frameHeight,
           player.x, player.y, player.width, player.height
         );
-      } else {
-        // Bloco reserva amarelo se por acaso a imagem falhar
-        ctx.fillStyle = '#ffd700';
-        ctx.fillRect(player.x, player.y, player.width, player.height);
       }
 
       if (gameState === 'FLYING') {
