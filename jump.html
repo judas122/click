@@ -253,18 +253,17 @@
         ctx.fillText(`${d - towerWidth}m`, d - 14, groundY + 32);
       }
 
-      // CORREÇÃO EXATA DO CORTE DA SPRITE SHEET
+      // CORREÇÃO DEFINITIVA: Uso da altura e largura completas do frame sem cortes ou achatamentos
       const currentAnimal = animals[petIndex];
       if (isLoaded && spriteSheet.complete && spriteSheet.naturalWidth > 0) {
         const totalW = spriteSheet.naturalWidth;
         const totalH = spriteSheet.naturalHeight;
         const frameW = totalW / 5;
         
-        // Recorta apenas a região inferior da imagem onde os sprites estão posicionados
         const srcX = currentAnimal.frame * frameW;
-        const srcY = totalH * 0.55; 
+        const srcY = 0; 
         const srcW = frameW;
-        const srcH = totalH * 0.45;
+        const srcH = totalH;
 
         ctx.save();
         ctx.imageSmoothingEnabled = false;
