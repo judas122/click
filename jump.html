@@ -8,55 +8,54 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
     
-    body {
+    body, html {
+      width: 100%;
+      height: 100%;
       background: #0b0d12;
       color: #fff;
       font-family: 'Press Start 2P', cursive, monospace;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      overflow: hidden;
     }
 
     #game-container {
       position: relative;
       display: flex;
-      border: 6px solid #2d1810;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      width: 100vw;
+      height: 100vh;
       background: #87ceeb;
     }
 
     #shop-panel {
-      width: 220px;
-      height: 500px;
+      width: 260px;
+      height: 100%;
       background: #5c3a21;
       border-right: 6px solid #3d2314;
       outline: 4px solid #2e7d32;
-      padding: 12px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       z-index: 10;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
 
     h2 {
       color: #ffd700;
-      font-size: 10px;
+      font-size: 11px;
       text-align: center;
       line-height: 1.4;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       text-shadow: 2px 2px #000;
     }
 
     .ui-info {
-      font-size: 7px;
+      font-size: 8px;
       color: #e2d8b3;
-      margin-bottom: 8px;
-      line-height: 1.4;
+      margin-bottom: 10px;
+      line-height: 1.5;
       text-shadow: 1px 1px #000;
     }
 
@@ -64,25 +63,25 @@
       background: #4a7c59;
       color: #fff;
       border: 3px solid #2d4a35;
-      padding: 8px 5px;
-      margin: 5px 0;
+      padding: 10px 8px;
+      margin: 8px 0;
       font-family: 'Press Start 2P', cursive;
-      font-size: 6px;
+      font-size: 7px;
       line-height: 1.3;
       cursor: pointer;
       border-radius: 4px;
-      box-shadow: 0 3px #1b3022;
+      box-shadow: 0 4px #1b3022;
       transition: all 0.1s;
       width: 100%;
     }
     .btn:hover:not(:disabled) {
       background: #5b996f;
       transform: translateY(-2px);
-      box-shadow: 0 5px #1b3022;
+      box-shadow: 0 6px #1b3022;
     }
     .btn:active:not(:disabled) {
       transform: translateY(2px);
-      box-shadow: 0 1px #1b3022;
+      box-shadow: 0 2px #1b3022;
     }
     .btn:disabled {
       background: #3a473d;
@@ -94,45 +93,26 @@
 
     canvas {
       display: block;
+      flex-grow: 1;
+      height: 100%;
       image-rendering: pixelated;
     }
 
     .hud-top {
       position: absolute;
-      top: 12px;
-      right: 15px;
-      font-size: 8px;
+      top: 15px;
+      right: 25px;
+      font-size: 10px;
       color: #ffffff;
       text-shadow: 2px 2px #000;
       pointer-events: none;
       display: flex;
-      gap: 15px;
+      gap: 20px;
       z-index: 20;
-    }
-
-    .back-btn {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      background: #38bdf8;
-      color: #0b0d12;
-      text-decoration: none;
-      padding: 8px 12px;
-      font-size: 8px;
-      font-weight: bold;
-      border-radius: 6px;
-      border: 2px solid #fff;
-      box-shadow: 0 4px rgba(0,0,0,0.4);
-      z-index: 100;
-    }
-    .back-btn:hover {
-      background: #7dd3fc;
     }
   </style>
 </head>
 <body>
-
-  <a href="index.html" class="back-btn">⬅ Sair do Jogo</a>
 
   <div id="game-container">
     <div id="shop-panel">
@@ -145,7 +125,7 @@
         <button id="buy-pet" class="btn" onclick="buyPet()">Evoluir Bicho<br><span id="cost-pet">50 moedas</span></button>
       </div>
 
-      <div class="ui-info" style="color: #a3e635; font-size: 6px; line-height: 1.4;">
+      <div class="ui-info" style="color: #a3e635; font-size: 7px; line-height: 1.5;">
         Como joga:<br>
         A/D - Anda<br>
         W - Pula<br>
@@ -153,18 +133,25 @@
       </div>
     </div>
 
-    <div style="position: relative;">
+    <div style="position: relative; flex-grow: 1; height: 100%;">
       <div class="hud-top">
         <div id="coin-display">💰 0</div>
         <div id="record-display">🏆 0m</div>
       </div>
-      <canvas id="canvas" width="720" height="500"></canvas>
+      <canvas id="canvas"></canvas>
     </div>
   </div>
 
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
     let coins = 0;
     let maxDistance = 0;
@@ -176,7 +163,6 @@
     spriteSheet.onload = () => { isLoaded = true; };
     spriteSheet.src = 'bichos.png-removebg-preview.png';
 
-    // Personagens maiores e bem proporcionados (tamanho padrão 64x64)
     const animals = [
       { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, size: 64 },
       { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, size: 68 },
@@ -272,8 +258,8 @@
 
     function resetToTower() {
       gameState = 'TOWER';
-      const groundY = canvas.height - 60;
-      const towerHeight = 120 + (towerLevel * 50);
+      const groundY = canvas.height - 80;
+      const towerHeight = 150 + (towerLevel * 60);
       
       player.x = 80;
       player.y = groundY - towerHeight - player.height;
@@ -286,7 +272,7 @@
     function handleJump() {
       if (gameState === 'TOWER') {
         if (player.isGrounded) {
-          player.vy = -7.5;
+          player.vy = -8.0;
           player.isGrounded = false;
         }
       } else if (gameState === 'FLYING') {
@@ -300,9 +286,9 @@
     function gameLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const towerWidth = 220;
-      const groundY = canvas.height - 60;
-      const towerHeight = 120 + (towerLevel * 50);
+      const towerWidth = 240;
+      const groundY = canvas.height - 80;
+      const towerHeight = 150 + (towerLevel * 60);
       const towerTopY = groundY - towerHeight;
 
       if (gameState === 'TOWER') {
@@ -355,21 +341,21 @@
         }
       }
 
-      cameraX = Math.max(0, player.x - 150);
-      cameraY = player.y - 250;
+      cameraX = Math.max(0, player.x - 200);
+      cameraY = player.y - (canvas.height / 2);
 
       ctx.save();
       ctx.translate(-cameraX, -cameraY);
 
       // Céu
       ctx.fillStyle = '#87ceeb';
-      ctx.fillRect(cameraX, cameraY, canvas.width, canvas.height);
+      ctx.fillRect(cameraX, cameraY, canvas.width, canvas.height + Math.abs(cameraY));
 
       // Nuvens
       ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-      ctx.fillRect(150, cameraY + 80, 80, 25);
-      ctx.fillRect(500, cameraY + 150, 90, 25);
-      ctx.fillRect(900, cameraY + 60, 100, 30);
+      ctx.fillRect(150, 100, 90, 30);
+      ctx.fillRect(600, 180, 100, 30);
+      ctx.fillRect(1100, 80, 120, 35);
 
       // Torre
       ctx.fillStyle = '#8b4513';
@@ -390,21 +376,21 @@
 
       // Chão
       ctx.fillStyle = '#8b5a2b';
-      ctx.fillRect(-200, groundY, cameraX + canvas.width + 500, 1000);
+      ctx.fillRect(-200, groundY, cameraX + canvas.width + 1000, 1000);
       ctx.fillStyle = '#4ca64c';
-      ctx.fillRect(-200, groundY, cameraX + canvas.width + 500, 12);
+      ctx.fillRect(-200, groundY, cameraX + canvas.width + 1000, 12);
       ctx.fillStyle = '#2e7d32';
-      ctx.fillRect(-200, groundY + 10, cameraX + canvas.width + 500, 4);
+      ctx.fillRect(-200, groundY + 10, cameraX + canvas.width + 1000, 4);
 
       // Marcadores de Distância
       ctx.fillStyle = '#fff';
-      ctx.font = '7px "Press Start 2P"';
-      for (let d = 300; d < player.x + 1000; d += 150) {
+      ctx.font = '8px "Press Start 2P"';
+      for (let d = 300; d < player.x + 1500; d += 200) {
         ctx.fillRect(d, groundY, 4, 16);
-        ctx.fillText(`${d - towerWidth}m`, d - 12, groundY + 32);
+        ctx.fillText(`${d - towerWidth}m`, d - 14, groundY + 32);
       }
 
-      // CORREÇÃO DOS SPRITES: Cortando na VERTICAL (Linhas da imagem empilhadas)
+      // Renderização do bicho corrigida
       const currentAnimal = animals[petIndex];
       if (isLoaded && spriteSheet.naturalHeight > 0) {
         const frameWidth = spriteSheet.naturalWidth;
@@ -419,8 +405,8 @@
 
       if (gameState === 'FLYING') {
         ctx.fillStyle = '#2e7d32';
-        ctx.font = '7px "Press Start 2P"';
-        ctx.fillText(`Pulos:${player.flapsLeft}`, player.x - 10, player.y - 10);
+        ctx.font = '8px "Press Start 2P"';
+        ctx.fillText(`Pulos:${player.flapsLeft}`, player.x - 10, player.y - 12);
       }
 
       ctx.restore();
