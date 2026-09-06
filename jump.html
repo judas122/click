@@ -58,15 +58,19 @@
 
     const spriteSheet = new Image();
     let isLoaded = false;
-    spriteSheet.onload = () => { isLoaded = true; };
+    spriteSheet.onload = () => { 
+      isLoaded = true; 
+      updatePlayerDimensions();
+      resetToTower();
+    };
     spriteSheet.src = 'bichos.png-removebg-preview.png';
 
     const animals = [
-      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0, size: 42 },
-      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1, size: 46 },
-      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2, size: 42 },
-      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3, size: 50 },
-      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4, size: 56 }
+      { name: "Pintinho 🐥", speed: 5, gravity: 0.22, flapPower: -5.5, maxFlaps: 2, frame: 0 },
+      { name: "Galinha 🐔", speed: 6.5, gravity: 0.20, flapPower: -6.5, maxFlaps: 3, frame: 1 },
+      { name: "Passarinho 🐦", speed: 8, gravity: 0.17, flapPower: -7.0, maxFlaps: 4, frame: 2 },
+      { name: "Águia 🦅", speed: 10, gravity: 0.14, flapPower: -8.0, maxFlaps: 6, frame: 3 },
+      { name: "Dragão 🐉", speed: 13, gravity: 0.11, flapPower: -9.0, maxFlaps: 10, frame: 4 }
     ];
 
     let towerLevel = 1;
@@ -80,9 +84,21 @@
       vy: 0,
       isGrounded: false,
       flapsLeft: 2,
-      width: 42,
-      height: 42
+      width: 48,
+      height: 48
     };
+
+    function updatePlayerDimensions() {
+      if (isLoaded && spriteSheet.complete && spriteSheet.naturalWidth > 0) {
+        const totalW = spriteSheet.naturalWidth;
+        const totalH = spriteSheet.naturalHeight;
+        const frameW = totalW / 5;
+        const baseHeight = 52;
+        const aspect = frameW / totalH;
+        player.width = Math.round(baseHeight * aspect);
+        player.height = baseHeight;
+      }
+    }
 
     window.addEventListener('keydown', (e) => {
       if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.a = true;
@@ -127,8 +143,7 @@
       if (coins >= cost && petIndex < animals.length - 1) {
         coins -= cost;
         petIndex++;
-        player.width = animals[petIndex].size;
-        player.height = animals[petIndex].size;
+        updatePlayerDimensions();
         resetToTower();
         updateUI();
       }
@@ -136,11 +151,10 @@
 
     function resetToTower() {
       resizeCanvas();
+      updatePlayerDimensions();
       gameState = 'TOWER';
       const groundY = canvas.height - 80;
       const towerHeight = 150 + (towerLevel * 60);
-      player.width = animals[petIndex].size;
-      player.height = animals[petIndex].size;
       player.x = 80;
       player.y = groundY - towerHeight - player.height;
       player.vx = 0;
@@ -165,6 +179,7 @@
       const groundY = canvas.height - 80;
       const towerHeight = 150 + (towerLevel * 60);
       const towerTopY = groundY - towerHeight;
+      const groundContactOffset = 6; // Encaixe perfeito tocando a grama
 
       if (gameState === 'TOWER') {
         if (keys.a) player.vx = -3.5;
@@ -195,8 +210,8 @@
         player.y += player.vy;
         player.vx = Math.max(1.5, player.vx - 0.004);
 
-        if (player.y >= groundY - player.height) {
-          player.y = groundY - player.height; // Encaixe perfeito no chão exato (groundY)
+        if (player.y >= groundY - player.height + groundContactOffset) {
+          player.y = groundY - player.height + groundContactOffset;
           gameState = 'GAMEOVER';
           const distanceEarned = Math.floor(player.x - towerWidth);
           const earnedCoins = Math.max(0, Math.floor(distanceEarned / 12));
@@ -255,7 +270,7 @@
         ctx.fillText(`${d - towerWidth}m`, d - 14, groundY + 32);
       }
 
-      // RENDERIZAÇÃO PERFEITA E PROPORCIONAL DO SPRITE
+      // RENDERIZAÇÃO COM PROPORÇÃO CORRETA E TOQUE EXATO NO CHÃO
       const currentAnimal = animals[petIndex];
       if (isLoaded && spriteSheet.complete && spriteSheet.naturalWidth > 0) {
         const totalW = spriteSheet.naturalWidth;
